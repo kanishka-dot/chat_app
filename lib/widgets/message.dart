@@ -45,15 +45,18 @@ class Message extends StatelessWidget {
                 SizedBox(
                   width: 10,
                 ),
-                Container(
-                  height: 47,
-                  width: 47,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle, color: Colors.blueGrey),
-                  child: Icon(
-                    Icons.send,
-                    size: 33,
+                InkWell(
+                  child: Container(
+                    height: 47,
+                    width: 47,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle, color: Colors.blueGrey),
+                    child: Icon(
+                      Icons.send,
+                      size: 33,
+                    ),
                   ),
+                  onTap: () => {print("object")},
                 )
               ],
             ),
