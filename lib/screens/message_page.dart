@@ -1,3 +1,4 @@
+import 'package:chat_app/screens/conversation_page.dart';
 import 'package:chat_app/widgets/SquareAvatar.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
@@ -68,7 +69,8 @@ class MessagesState extends State<Messages> {
         style: _messageFont,
       ),
       onTap: () {
-        setState(() {});
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Conversation()));
       },
       dense: true,
       trailing: Text(

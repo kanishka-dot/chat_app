@@ -1,4 +1,5 @@
 import 'package:chat_app/screens/login_page.dart';
+import 'package:chat_app/screens/main_menu.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -25,8 +26,8 @@ class Service {
       await auth
           .signInWithEmailAndPassword(email: email, password: password)
           .then((value) => {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Login()))
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MainMenu()))
               });
     } catch (e) {
       errorHandle(context, e);

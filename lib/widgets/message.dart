@@ -1,11 +1,32 @@
-import 'package:flutter/foundation.dart';
+import 'package:chat_app/config/firebase.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+var loginUser = FirebaseAuth.instance.currentUser;
+
 class Message extends StatelessWidget {
+  TextEditingController messageTextControler = TextEditingController();
+
+  Service service = Service();
+  final auth = FirebaseAuth.instance;
+  final messageStore = FirebaseFirestore.instance;
+
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
       children: [
+        Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                  height: MediaQuery.of(context).size.height - 100.0,
+                  child: ShowMessage()),
+            ],
+          ),
+        ),
         Spacer(),
         Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -24,11 +45,15 @@ class Message extends StatelessWidget {
                     child: Row(
                       children: [
                         Expanded(
-                          child: TextField(
-                            enableSuggestions: true,
-                            decoration: InputDecoration(
-                                hintText: " Type a Message",
-                                border: InputBorder.none),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 15),
+                            child: TextField(
+                              controller: messageTextControler,
+                              enableSuggestions: true,
+                              decoration: InputDecoration(
+                                  hintText: "Type a Message",
+                                  border: InputBorder.none),
+                            ),
                           ),
                         ),
                         Icon(
@@ -56,13 +81,47 @@ class Message extends StatelessWidget {
                       size: 33,
                     ),
                   ),
-                  onTap: () => {print("object")},
+                  onTap: () => {
+                    messageStore.collection("messages").doc().set({
+                      "message": messageTextControler.text.trim(),
+                      "user": loginUser.email.toString()
+                    }),
+                    if (messageTextControler.text.isNotEmpty)
+                      {messageTextControler.clear()}
+                  },
                 )
               ],
             ),
           ),
         )
       ],
+    );
+  }
+}
+
+class ShowMessage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection("messages").snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        return ListView.builder(
+            reverse: true,
+            itemCount: snapshot.data.docs.length,
+            shrinkWrap: true,
+            primary: true,
+            itemBuilder: (context, i) {
+              QueryDocumentSnapshot x = snapshot.data.docs[i];
+              return ListTile(
+                title: Text(x['message']),
+              );
+            });
+      },
     );
   }
 }

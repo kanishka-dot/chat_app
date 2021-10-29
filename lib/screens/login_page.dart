@@ -25,9 +25,10 @@ class Login extends StatelessWidget {
                 child: TextField(
                   controller: emailEditingControler,
                   decoration: InputDecoration(
-                      hintText: "Enter Email",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20))),
+                    hintText: "Enter Email",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                  ),
                 ),
               ),
               Padding(
