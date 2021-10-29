@@ -1,22 +1,29 @@
 import 'package:chat_app/screens/conversation_page.dart';
 import 'package:chat_app/screens/friend_request_page.dart';
+import 'package:chat_app/screens/login_page.dart';
 // import 'package:chat_app/screens/friends_list_page.dart';
 import 'package:chat_app/screens/main_menu.dart';
 import 'package:chat_app/screens/message_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/config/color_palette.dart';
 
-void main() => runApp(new MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(new MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
         theme: new ThemeData(
           primarySwatch: Colors.blueGrey,
         ),
-        home: Conversation());
+        home: Login());
   }
 }
 
