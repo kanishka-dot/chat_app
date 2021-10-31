@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class Register extends StatelessWidget {
   TextEditingController emailEditingControler = TextEditingController();
+  TextEditingController userNameEditingControler = TextEditingController();
   TextEditingController passwordEditingControler = TextEditingController();
   Service service = Service();
   @override
@@ -30,6 +31,16 @@ class Register extends StatelessWidget {
                 ),
               ),
               Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: TextField(
+                  controller: userNameEditingControler,
+                  decoration: InputDecoration(
+                      hintText: "User Name",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20))),
+                ),
+              ),
+              Padding(
                 padding: const EdgeInsets.only(top: 12.0, bottom: 5),
                 child: TextField(
                   controller: passwordEditingControler,
@@ -45,8 +56,11 @@ class Register extends StatelessWidget {
                   if (emailEditingControler.text.isNotEmpty &&
                       passwordEditingControler.text.isNotEmpty)
                     {
-                      service.createUser(context, emailEditingControler.text,
-                          passwordEditingControler.text)
+                      service.createUser(
+                          context,
+                          emailEditingControler.text,
+                          passwordEditingControler.text,
+                          userNameEditingControler.text)
                     }
                   else
                     {

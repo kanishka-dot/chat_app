@@ -1,21 +1,22 @@
 import 'package:chat_app/widgets/message.dart';
 import 'package:flutter/material.dart';
 
-class Conversation extends StatefulWidget {
-  @override
-  _ConversationState createState() => _ConversationState();
-}
+class Conversation extends StatelessWidget {
+  var receiverid = "";
+  var receiverName = "";
 
-class _ConversationState extends State<Conversation> {
+  Conversation(this.receiverid, this.receiverName);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(),
-      body: Message(),
+      body: Message(receiverid),
     );
   }
 
   AppBar buildAppBar() {
+    print(receiverid);
     return AppBar(
       automaticallyImplyLeading: false,
       title: Row(
@@ -30,13 +31,13 @@ class _ConversationState extends State<Conversation> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Jennifer",
+                receiverName,
                 style: TextStyle(fontSize: 16),
               ),
-              Text(
-                "Active 2m ago",
-                style: TextStyle(fontSize: 12),
-              )
+              // Text(
+              //   "Active 2m ago",
+              //   style: TextStyle(fontSize: 12),
+              // )
             ],
           )
         ],

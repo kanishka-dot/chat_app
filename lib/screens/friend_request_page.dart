@@ -14,7 +14,7 @@ class FriendsRequest extends StatefulWidget {
 
 class FriendsState extends State<FriendsRequest> {
   bool _isProgressBarShown = true;
-  final _fontSize = const TextStyle(fontSize: 12.0);
+  final _fontSize = const TextStyle(fontSize: 13.0);
   List<FriendsModel> _listFriends;
 
   @override
