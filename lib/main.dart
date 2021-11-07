@@ -1,12 +1,7 @@
-import 'package:chat_app/screens/conversation_page.dart';
-import 'package:chat_app/screens/friend_request_page.dart';
 import 'package:chat_app/screens/login_page.dart';
 // import 'package:chat_app/screens/friends_list_page.dart';
-import 'package:chat_app/screens/main_menu.dart';
-import 'package:chat_app/screens/message_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:chat_app/config/color_palette.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

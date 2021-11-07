@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-var loginUser = FirebaseAuth.instance.currentUser.email;
+var loginUser = FirebaseAuth.instance.currentUser.uid;
 
 class Messages extends StatelessWidget {
   TextEditingController messageTextControler = TextEditingController();
@@ -45,7 +45,7 @@ class ShowMessage extends StatelessWidget {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection("users")
-          .where("email", isNotEqualTo: loginUser)
+          .where("userid", isNotEqualTo: loginUser)
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
@@ -72,7 +72,7 @@ class ShowMessage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              Conversation(x['email'], x['username'])))
+                              Conversation(x['userid'], x['username'])))
                 },
               );
             });

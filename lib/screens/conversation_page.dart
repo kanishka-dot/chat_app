@@ -11,7 +11,7 @@ class Conversation extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(),
-      body: Message(receiverid),
+      body: Message(receiverId: receiverid),
     );
   }
 

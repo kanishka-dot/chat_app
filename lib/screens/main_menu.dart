@@ -1,9 +1,12 @@
+import 'dart:io';
 import 'package:chat_app/screens/friend_request_page.dart';
 import 'package:chat_app/screens/friends_list_page.dart';
 import 'package:chat_app/screens/message_page.dart';
 import 'package:chat_app/screens/user_account_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/config/color_palette.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainMenu extends StatefulWidget {
   MainMenu({Key key}) : super(key: key);
@@ -13,17 +16,28 @@ class MainMenu extends StatefulWidget {
 }
 
 class FriendsState extends State<MainMenu> {
-  int currentindex = 1;
+  var loginUser;
+  // SharedPreferences preferences;
+  String photourl;
+
+  int currentindex = 0;
   final screens = [
-    UserAccount(),
     Messages(),
     FriendsPage(),
     FriendsRequest(),
+    UserAccount(),
   ];
   @override
   void initState() {
     super.initState();
+    loginUser = FirebaseAuth.instance.currentUser;
+    // getProfileImage();
   }
+
+  // Future getProfileImage() async {
+  //   preferences = await SharedPreferences.getInstance();
+  //   photourl = preferences.get('dpurl');
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +52,6 @@ class FriendsState extends State<MainMenu> {
         items: [
           BottomNavigationBarItem(
             backgroundColor: themecolor,
-            icon: Icon(Icons.account_box),
-            label: 'Account',
-          ),
-          BottomNavigationBarItem(
-            backgroundColor: themecolor,
             icon: Icon(Icons.message),
             label: 'Messages',
           ),
@@ -55,7 +64,14 @@ class FriendsState extends State<MainMenu> {
             backgroundColor: themecolor,
             icon: Icon(Icons.notifications),
             label: 'Request',
-          )
+          ),
+          BottomNavigationBarItem(
+            backgroundColor: themecolor,
+            icon: CircleAvatar(
+              backgroundImage: AssetImage('assets/person1.png'),
+            ),
+            label: 'Account',
+          ),
         ],
       ),
     );
