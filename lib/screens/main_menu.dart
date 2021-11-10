@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:chat_app/screens/friend_request_page.dart';
 import 'package:chat_app/screens/friends_list_page.dart';
 import 'package:chat_app/screens/message_page.dart';
@@ -6,7 +5,6 @@ import 'package:chat_app/screens/user_account_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/config/color_palette.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MainMenu extends StatefulWidget {
   MainMenu({Key key}) : super(key: key);

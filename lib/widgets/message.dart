@@ -1,8 +1,12 @@
+import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_app/config/firebase.dart';
-import 'package:chat_app/screens/message_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 var loginUser = FirebaseAuth.instance.currentUser;
@@ -23,6 +27,9 @@ class _MessageState extends State<Message> {
   final messageStore = FirebaseFirestore.instance;
   String receiverId;
   String id;
+  File imageFile;
+  String imageUrl;
+  bool isLoading = false;
 
   String chatId;
   SharedPreferences preferances;
@@ -52,6 +59,55 @@ class _MessageState extends State<Message> {
         .doc(id)
         .update({'chattingwith': receiverId});
     setState(() {});
+  }
+
+  Future getImage() async {
+    final picker = ImagePicker();
+    PickedFile pickedFile =
+        await picker.getImage(source: ImageSource.gallery, imageQuality: 85);
+    imageFile = File(pickedFile.path);
+
+    if (imageFile != null) {
+      isLoading = true;
+    }
+    uploadImageFile();
+  }
+
+  uploadImageFile() async {
+    String fileName = DateTime.now().microsecondsSinceEpoch.toString();
+    Reference storageReferance =
+        FirebaseStorage.instance.ref().child("Chat Image").child(fileName);
+
+    UploadTask storageUploadTask = storageReferance.putFile(imageFile);
+    TaskSnapshot storageTaskSnapShot = await storageUploadTask.whenComplete(
+      () => storageReferance.getDownloadURL().then((downloadURL) {
+        imageUrl = downloadURL;
+        onSendMessage(imageUrl, 2);
+        setState(() {
+          isLoading = false;
+        });
+      }, onError: (error) {
+        setState(() {
+          isLoading = false;
+        });
+        Fluttertoast.showToast(msg: "Error occured sending image");
+      }),
+    );
+  }
+
+  onSendMessage(String content, int type) {
+    messageStore
+        .collection("messages")
+        .doc(chatId)
+        .collection(chatId)
+        .doc(DateTime.now().microsecondsSinceEpoch.toString())
+        .set({
+      "message": content,
+      "sent_by": loginUser.uid.toString(),
+      "received_by": receiverId,
+      "type": type,
+      "time": DateTime.now(),
+    });
   }
 
   createListMessage() {
@@ -87,18 +143,61 @@ class _MessageState extends State<Message> {
                         ? CrossAxisAlignment.end
                         : CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                            color: loginUser.uid == x['sent_by']
-                                ? Colors.blue.withOpacity(0.5)
-                                : Colors.amber.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(12)),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                        child: Text(
-                          x['message'],
-                        ),
-                      )
+                      x['type'] == 1
+                          ? Container(
+                              decoration: BoxDecoration(
+                                  color: loginUser.uid == x['sent_by']
+                                      ? Colors.blue.withOpacity(0.5)
+                                      : Colors.amber.withOpacity(0.5),
+                                  borderRadius: BorderRadius.circular(12)),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
+                              child: Text(
+                                x['message'],
+                              ),
+                            )
+                          : Container(
+                              child: FlatButton(
+                                child: Material(
+                                  child: CachedNetworkImage(
+                                    placeholder: (context, url) => Container(
+                                      child: CircularProgressIndicator(
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Colors.lightBlueAccent),
+                                      ),
+                                      width: 200.0,
+                                      height: 200.0,
+                                      padding: EdgeInsets.all(70.0),
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(8.0))),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Material(
+                                      child: Image.asset(
+                                        'assets/errorimage.png',
+                                        width: 200.0,
+                                        height: 200.0,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(8.0),
+                                      ),
+                                      clipBehavior: Clip.hardEdge,
+                                    ),
+                                    imageUrl: x['message'],
+                                    width: 200.0,
+                                    height: 200.0,
+                                  ),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(8.0),
+                                  ),
+                                  clipBehavior: Clip.hardEdge,
+                                ),
+                              ),
+                            )
                     ]),
               );
             });
@@ -154,9 +253,12 @@ class _MessageState extends State<Message> {
                             ),
                           ),
                         ),
-                        Icon(
-                          Icons.image,
-                          size: 25,
+                        IconButton(
+                          onPressed: getImage,
+                          icon: Icon(
+                            Icons.image,
+                            size: 25,
+                          ),
                         ),
                         SizedBox(
                           width: 10,
@@ -181,21 +283,7 @@ class _MessageState extends State<Message> {
                   ),
                   onTap: () => {
                     if (messageTextControler.text.trim().isNotEmpty)
-                      {
-                        messageStore
-                            .collection("messages")
-                            .doc(chatId)
-                            .collection(chatId)
-                            .doc(DateTime.now()
-                                .microsecondsSinceEpoch
-                                .toString())
-                            .set({
-                          "message": messageTextControler.text.trim(),
-                          "sent_by": loginUser.uid.toString(),
-                          "received_by": receiverId,
-                          "time": DateTime.now(),
-                        })
-                      },
+                      {onSendMessage(messageTextControler.text, 1)},
                     if (messageTextControler.text.isNotEmpty)
                       {messageTextControler.clear()}
                   },
@@ -208,93 +296,3 @@ class _MessageState extends State<Message> {
     );
   }
 }
-
-// class ShowMessage extends StatelessWidget {
-//   final String receiverid;
-//   final String senderid;
-
-//   ShowMessage({@required this.receiverid, @required this.senderid});
-
-//   @override
-//   _ShowMessageState createState() =>
-//       _ShowMessageState(receiverid: receiverid, senderid: senderid);
-// }
-
-// class _ShowMessageState extends State<ShowMessage> {
-//   String receiverid;
-//   String senderid;
-//   String chatId;
-//   String id;
-//   SharedPreferences preferances;
-//   _ShowMessageState(
-//       {Key key, @required this.receiverid, @required this.senderid});
-
-//   initState() {
-//     super.initState();
-
-//     getChatId();
-//   }
-
-//   void getChatId() {
-//     if (senderid.hashCode <= receiverid.hashCode) {
-//       chatId = '$senderid-$receiverid';
-//     } else {
-//       chatId = '$receiverid-$senderid';
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return StreamBuilder<QuerySnapshot>(
-//       stream: FirebaseFirestore.instance
-//           .collection("messages")
-//           .doc(chatId)
-//           .collection(chatId)
-//           .orderBy("time", descending: true)
-//           .snapshots(),
-//       builder: (context, snapshot) {
-//         if (!snapshot.hasData) {
-//           print("Ado data naaaa");
-//         } else {
-//           print(snapshot.data.docs);
-//         }
-//         if (!snapshot.hasData) {
-//           return Center(
-//             child: CircularProgressIndicator(),
-//           );
-//         }
-//         return ListView.builder(
-//             physics: ScrollPhysics(),
-//             reverse: true,
-//             itemCount: snapshot.data.docs.length,
-//             shrinkWrap: true,
-//             primary: true,
-//             itemBuilder: (context, i) {
-//               QueryDocumentSnapshot x = snapshot.data.docs[i];
-//               print('query--->$x');
-//               print("Hiiiiiiiiiiii");
-//               return ListTile(
-//                 title: Column(
-//                     crossAxisAlignment: loginUser.uid == x['sent_by']
-//                         ? CrossAxisAlignment.end
-//                         : CrossAxisAlignment.start,
-//                     children: [
-//                       Container(
-//                         decoration: BoxDecoration(
-//                             color: loginUser.uid == x['sent_by']
-//                                 ? Colors.blue.withOpacity(0.5)
-//                                 : Colors.amber.withOpacity(0.5),
-//                             borderRadius: BorderRadius.circular(12)),
-//                         padding:
-//                             EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-//                         child: Text(
-//                           x['message'],
-//                         ),
-//                       )
-//                     ]),
-//               );
-//             });
-//       },
-//     );
-//   }
-// }
