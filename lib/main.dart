@@ -1,4 +1,5 @@
 import 'package:chat_app/screens/login_page.dart';
+import 'package:chat_app/screens/slider_screen.dart';
 // import 'package:chat_app/screens/friends_list_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +19,9 @@ class MyApp extends StatelessWidget {
         theme: new ThemeData(
           primarySwatch: Colors.blueGrey,
         ),
-        home: Login());
+        home: IntroSliderPage());
   }
+  // home: Login());
 }
 
 class MyHomePage extends StatelessWidget {

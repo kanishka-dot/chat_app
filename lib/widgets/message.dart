@@ -157,7 +157,7 @@ class _MessageState extends State<Message> {
                               ),
                             )
                           : Container(
-                              child: FlatButton(
+                              child: TextButton(
                                 child: Material(
                                   child: CachedNetworkImage(
                                     placeholder: (context, url) => Container(
@@ -196,6 +196,7 @@ class _MessageState extends State<Message> {
                                   ),
                                   clipBehavior: Clip.hardEdge,
                                 ),
+                                onPressed: () => {},
                               ),
                             )
                     ]),
