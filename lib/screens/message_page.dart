@@ -60,6 +60,7 @@ class ShowMessage extends StatelessWidget {
             primary: true,
             itemBuilder: (context, i) {
               QueryDocumentSnapshot x = snapshot.data.docs[i];
+
               return ListTile(
                 leading: new SquareAvatar(
                   x['dpurl'],

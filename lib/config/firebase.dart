@@ -76,8 +76,7 @@ class Service {
       await auth
           .signInWithEmailAndPassword(email: email, password: password)
           .then((value) => {
-                if (value.user.uid != "")
-                  {saveUserDetails(value.user.uid), getUser()},
+                if (value.user.uid != "") {saveUserDetails(value.user.uid)},
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => MainMenu()))
               });

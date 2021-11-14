@@ -18,8 +18,13 @@ class SquareAvatar extends StatelessWidget {
           height: 40.0,
           width: 40.0,
           child: backgroundImage == ""
-              ? new Image.asset('assets/person1.png')
-              : new Image.network(backgroundImage),
+              ? new Image.asset(
+                  'assets/person1.png',
+                )
+              : new Image.network(
+                  backgroundImage,
+                  fit: BoxFit.cover,
+                ),
         ),
         ConditionRender(isActive)
       ]),

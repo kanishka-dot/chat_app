@@ -1,9 +1,11 @@
 import 'package:chat_app/widgets/SquareAvatar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
-import 'dart:convert';
 import 'package:chat_app/models/FriendsModel.dart';
 import 'package:chat_app/config/color_palette.dart';
+
+var loginUser = FirebaseAuth.instance.currentUser.uid;
 
 class FriendsPage extends StatefulWidget {
   FriendsPage({Key key}) : super(key: key);
@@ -16,10 +18,12 @@ class FriendsState extends State<FriendsPage> {
   bool _isProgressBarShown = true;
   final _biggerFont = const TextStyle(fontSize: 13.0);
   List<FriendsModel> _listFriends;
+  List<String> _listFriend;
 
   @override
   void initState() {
     super.initState();
+    // _getFriendList();
     _fetchFriendsList();
   }
 
@@ -40,7 +44,6 @@ class FriendsState extends State<FriendsPage> {
           shrinkWrap: true,
           padding: const EdgeInsets.all(0.0),
           itemBuilder: (context, i) {
-            if (i.isOdd) return new Divider();
             return _buildRow(_listFriends[i]);
           });
     }
@@ -75,40 +78,57 @@ class FriendsState extends State<FriendsPage> {
     );
   }
 
-  _fetchFriendsList() async {
+  Future _fetchFriendsList() async {
     _isProgressBarShown = true;
-    var url = 'https://randomuser.me/api/?results=100&nat=us';
-    var httpClient = new HttpClient();
 
-    List<FriendsModel> listFriends = <FriendsModel>[];
-    try {
-      var request = await httpClient.getUrl(Uri.parse(url));
-      var response = await request.close();
-      if (response.statusCode == HttpStatus.ok) {
-        var json = await response.transform(utf8.decoder).join();
-        Map data = jsonDecode(json);
+    final friends = await _getFriendList();
 
-        for (var res in data['results']) {
-          var objName = res['name'];
-          String name =
-              objName['first'].toString() + " " + objName['last'].toString();
+    print('Friends----->$friends');
 
-          var objImage = res['picture'];
-          String profileUrl = objImage['large'].toString();
-          FriendsModel friendsModel = new FriendsModel(name, profileUrl);
+    FirebaseFirestore.instance
+        .collection('users')
+        .where('userid', whereNotIn: _listFriend)
+        .snapshots()
+        .forEach((querySnapshot) {
+      List<FriendsModel> listFriends = <FriendsModel>[];
+
+      querySnapshot.docs.forEach((doc) {
+        if (doc["userid"] != loginUser) {
+          FriendsModel friendsModel =
+              new FriendsModel(doc["username"], doc["dpurl"]);
           listFriends.add(friendsModel);
-          print(friendsModel.profileImageUrl);
         }
-      }
-    } catch (exception) {
-      print(exception.toString());
-    }
+      });
 
-    if (!mounted) return;
-
-    setState(() {
-      _listFriends = listFriends;
-      _isProgressBarShown = false;
+      setState(() {
+        _listFriends = listFriends;
+        _isProgressBarShown = false;
+      });
     });
+  }
+
+  List<String> _getFriendList() {
+    List<String> listFriend = <String>[];
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(loginUser)
+        .collection('friends')
+        .where('status', isEqualTo: 'accept')
+        .snapshots()
+        .forEach((querySnapshot) {
+      querySnapshot.docs.forEach((values) {
+        var userid = values["userid"];
+
+        listFriend.add(userid);
+      });
+
+      // print('Friendsssssssssssssss---->$listFriend');
+      // setState(() {
+      //   _listFriend = listFriend;
+      //   _isProgressBarShown = false;
+      // });
+    });
+    return listFriend;
   }
 }
