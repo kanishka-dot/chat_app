@@ -45,7 +45,9 @@ class ShowMessage extends StatelessWidget {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection("users")
-          .where("userid", isNotEqualTo: loginUser)
+          .doc(loginUser)
+          .collection('friends')
+          .where("status", isEqualTo: 'accept')
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {

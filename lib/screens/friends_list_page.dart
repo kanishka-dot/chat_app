@@ -18,13 +18,13 @@ class FriendsState extends State<FriendsPage> {
   bool _isProgressBarShown = true;
   final _biggerFont = const TextStyle(fontSize: 13.0);
   List<FriendsModel> _listFriends;
-  List<String> _listFriend;
+  // List<String> _listFriend;
 
   @override
   void initState() {
     super.initState();
-    // _getFriendList();
-    _fetchFriendsList();
+    _getFriendList();
+    // _fetchFriendsList();
   }
 
   @override
@@ -78,38 +78,37 @@ class FriendsState extends State<FriendsPage> {
     );
   }
 
-  Future _fetchFriendsList() async {
-    _isProgressBarShown = true;
+  // Future _fetchFriendsList() async {
+  //   _isProgressBarShown = true;
 
-    final friends = await _getFriendList();
+  //   await _getFriendList().then((value) {
+  //     print('Friends----->$_listFriend');
+  //   });
+  //   // final friends = await _getFriendList();
 
-    print('Friends----->$friends');
+  //   FirebaseFirestore.instance
+  //       .collection('users')
+  //       .where('userid', whereNotIn: _listFriend)
+  //       .snapshots()
+  //       .forEach((querySnapshot) {
+  //     List<FriendsModel> listFriends = <FriendsModel>[];
 
-    FirebaseFirestore.instance
-        .collection('users')
-        .where('userid', whereNotIn: _listFriend)
-        .snapshots()
-        .forEach((querySnapshot) {
-      List<FriendsModel> listFriends = <FriendsModel>[];
+  //     querySnapshot.docs.forEach((doc) {
+  //       if (doc["userid"] != loginUser) {
+  //         FriendsModel friendsModel =
+  //             new FriendsModel(doc["username"], doc["dpurl"]);
+  //         listFriends.add(friendsModel);
+  //       }
+  //     });
 
-      querySnapshot.docs.forEach((doc) {
-        if (doc["userid"] != loginUser) {
-          FriendsModel friendsModel =
-              new FriendsModel(doc["username"], doc["dpurl"]);
-          listFriends.add(friendsModel);
-        }
-      });
+  //     setState(() {
+  //       _listFriends = listFriends;
+  //       _isProgressBarShown = false;
+  //     });
+  //   });
+  // }
 
-      setState(() {
-        _listFriends = listFriends;
-        _isProgressBarShown = false;
-      });
-    });
-  }
-
-  List<String> _getFriendList() {
-    List<String> listFriend = <String>[];
-
+  Future _getFriendList() async {
     FirebaseFirestore.instance
         .collection('users')
         .doc(loginUser)
@@ -117,18 +116,39 @@ class FriendsState extends State<FriendsPage> {
         .where('status', isEqualTo: 'accept')
         .snapshots()
         .forEach((querySnapshot) {
+      List<String> listFriend = <String>[];
       querySnapshot.docs.forEach((values) {
         var userid = values["userid"];
 
-        listFriend.add(userid);
+        listFriend.add(userid); // get user friend list
       });
 
+      FirebaseFirestore.instance
+          .collection('users')
+          .where('userid',
+              whereNotIn: listFriend) // remove friends from find friends list
+          .snapshots()
+          .forEach((querySnapshot) {
+        List<FriendsModel> listFriends = <FriendsModel>[];
+
+        querySnapshot.docs.forEach((doc) {
+          if (doc["userid"] != loginUser) {
+            FriendsModel friendsModel =
+                new FriendsModel(doc["username"], doc["dpurl"]);
+            listFriends.add(friendsModel);
+          }
+        });
+
+        setState(() {
+          _listFriends = listFriends;
+          _isProgressBarShown = false;
+        });
+      });
       // print('Friendsssssssssssssss---->$listFriend');
       // setState(() {
       //   _listFriend = listFriend;
       //   _isProgressBarShown = false;
       // });
     });
-    return listFriend;
   }
 }
