@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/models/FriendsModel.dart';
 import 'package:chat_app/config/color_palette.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 var loginUser = FirebaseAuth.instance.currentUser.uid;
 
@@ -18,6 +19,7 @@ class FriendsState extends State<FriendsPage> {
   bool _isProgressBarShown = true;
   final _biggerFont = const TextStyle(fontSize: 13.0);
   List<FriendsModel> _listFriends;
+  final userStore = FirebaseFirestore.instance;
   // List<String> _listFriend;
 
   @override
@@ -63,7 +65,7 @@ class FriendsState extends State<FriendsPage> {
         style: _biggerFont,
       ),
       trailing: ElevatedButton(
-        onPressed: () {},
+        onPressed: sendRequest(friendsModel.userid),
         child: const Text(
           'Send Request',
           style: TextStyle(color: Colors.white, fontSize: 12),
@@ -134,7 +136,7 @@ class FriendsState extends State<FriendsPage> {
         querySnapshot.docs.forEach((doc) {
           if (doc["userid"] != loginUser) {
             FriendsModel friendsModel =
-                new FriendsModel(doc["username"], doc["dpurl"]);
+                new FriendsModel(doc["username"], doc["dpurl"], doc["userid"]);
             listFriends.add(friendsModel);
           }
         });
@@ -150,5 +152,19 @@ class FriendsState extends State<FriendsPage> {
       //   _isProgressBarShown = false;
       // });
     });
+  }
+
+  sendRequest(String uid) {
+    try {
+      userStore
+          .collection("users")
+          .doc(uid)
+          .collection('friends')
+          .doc(loginUser)
+          .set({'status': 'pending', 'create_date': DateTime.now()});
+      Fluttertoast.showToast(msg: "Friend Request Sent");
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Error Friend Request unable to send");
+    }
   }
 }

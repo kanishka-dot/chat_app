@@ -1,9 +1,11 @@
 import 'package:chat_app/widgets/Row2Buttons.dart';
 import 'package:chat_app/widgets/SquareAvatar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
-import 'dart:convert';
 import 'package:chat_app/models/FriendsModel.dart';
+
+var loginUser = FirebaseAuth.instance.currentUser.uid;
 
 class FriendsRequest extends StatefulWidget {
   FriendsRequest({Key key}) : super(key: key);
@@ -20,7 +22,7 @@ class FriendsState extends State<FriendsRequest> {
   @override
   void initState() {
     super.initState();
-    _fetchFriendsList();
+    _getFriendReqList();
   }
 
   @override
@@ -64,40 +66,47 @@ class FriendsState extends State<FriendsRequest> {
     );
   }
 
-  _fetchFriendsList() async {
-    _isProgressBarShown = true;
-    var url = 'https://randomuser.me/api/?results=100&nat=us';
-    var httpClient = new HttpClient();
+  Future _getFriendReqList() async {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(loginUser)
+        .collection('friends')
+        .where('status', isEqualTo: 'pending')
+        .snapshots()
+        .forEach((querySnapshot) {
+      List<String> listFriend = <String>[];
+      querySnapshot.docs.forEach((values) {
+        var userid = values["userid"];
 
-    List<FriendsModel> listFriends = <FriendsModel>[];
-    try {
-      var request = await httpClient.getUrl(Uri.parse(url));
-      var response = await request.close();
-      if (response.statusCode == HttpStatus.ok) {
-        var json = await response.transform(utf8.decoder).join();
-        Map data = jsonDecode(json);
+        listFriend.add(userid);
+      });
 
-        for (var res in data['results']) {
-          var objName = res['name'];
-          String name =
-              objName['first'].toString() + " " + objName['last'].toString();
+      FirebaseFirestore.instance
+          .collection('users')
+          .where('userid',
+              whereIn: listFriend) // remove friends from find friends list
+          .snapshots()
+          .forEach((querySnapshot) {
+        List<FriendsModel> listFriends = <FriendsModel>[];
 
-          var objImage = res['picture'];
-          String profileUrl = objImage['large'].toString();
-          FriendsModel friendsModel = new FriendsModel(name, profileUrl);
-          listFriends.add(friendsModel);
-          print(friendsModel.profileImageUrl);
-        }
-      }
-    } catch (exception) {
-      print(exception.toString());
-    }
+        querySnapshot.docs.forEach((doc) {
+          if (doc["userid"] != loginUser) {
+            FriendsModel friendsModel =
+                new FriendsModel(doc["username"], doc["dpurl"], doc["userid"]);
+            listFriends.add(friendsModel);
+          }
+        });
 
-    if (!mounted) return;
-
-    setState(() {
-      _listFriends = listFriends;
-      _isProgressBarShown = false;
+        setState(() {
+          _listFriends = listFriends;
+          _isProgressBarShown = false;
+        });
+      });
     });
+    // print('Friendsssssssssssssss---->$listFriend');
+    // setState(() {
+    //   _listFriend = listFriend;
+    //   _isProgressBarShown = false;
+    // });
   }
 }
