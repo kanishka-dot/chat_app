@@ -1,7 +1,6 @@
 import 'package:chat_app/config/firebase.dart';
 import 'package:chat_app/screens/conversation_page.dart';
 import 'package:chat_app/widgets/SquareAvatar.dart';
-import 'package:chat_app/widgets/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

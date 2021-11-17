@@ -30,20 +30,19 @@ class FriendsState extends State<FriendsRequest> {
     Widget widget;
 
     if (_isProgressBarShown) {
-      widget = new Center(
-          child: new Padding(
-              padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-              child: new CircularProgressIndicator()));
+      widget = new Center(child: new Text("No Friend Request"));
     } else {
       widget = new ListView.builder(
           physics: BouncingScrollPhysics(),
           itemCount: _listFriends.length,
           shrinkWrap: true,
           padding: const EdgeInsets.all(0.0),
-          itemBuilder: (context, i) {
-            if (i.isOdd) return new Divider();
-            return _buildRow(_listFriends[i]);
-          });
+          itemBuilder: _listFriends.length == 0 || _listFriends == null
+              ? _noFriendRequest()
+              : (context, i) {
+                  // if (i.isOdd) return new Divider();
+                  return _buildRow(_listFriends[i]);
+                });
     }
 
     return new Scaffold(
@@ -66,6 +65,14 @@ class FriendsState extends State<FriendsRequest> {
     );
   }
 
+  Widget _noFriendRequest() {
+    return new Container(
+      child: Center(
+        child: Text("No Friend Request yet"),
+      ),
+    );
+  }
+
   Future _getFriendReqList() async {
     FirebaseFirestore.instance
         .collection('users')
@@ -80,11 +87,13 @@ class FriendsState extends State<FriendsRequest> {
 
         listFriend.add(userid);
       });
-
+      List<String> newUser = <String>[""];
       FirebaseFirestore.instance
           .collection('users')
           .where('userid',
-              whereIn: listFriend) // remove friends from find friends list
+              whereIn: (listFriend == null || listFriend.length == 0
+                  ? newUser
+                  : listFriend)) // remove friends from find friends list
           .snapshots()
           .forEach((querySnapshot) {
         List<FriendsModel> listFriends = <FriendsModel>[];

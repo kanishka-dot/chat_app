@@ -65,13 +65,13 @@ class FriendsState extends State<FriendsPage> {
         style: _biggerFont,
       ),
       trailing: ElevatedButton(
-        onPressed: sendRequest(friendsModel.userid),
+        onPressed: () => {sendRequest(friendsModel.userid)},
         child: const Text(
           'Send Request',
           style: TextStyle(color: Colors.white, fontSize: 12),
         ),
         style: ElevatedButton.styleFrom(
-          primary: sendrequestbutton, // background
+          primary: sendrequestbutton, // backgr/ound
         ),
       ),
       onTap: () {
@@ -115,43 +115,45 @@ class FriendsState extends State<FriendsPage> {
         .collection('users')
         .doc(loginUser)
         .collection('friends')
-        .where('status', isEqualTo: 'accept')
+        .where('status', whereIn: ['accept', 'pending'])
         .snapshots()
         .forEach((querySnapshot) {
-      List<String> listFriend = <String>[];
-      querySnapshot.docs.forEach((values) {
-        var userid = values["userid"];
+          List<String> listFriend = <String>[];
+          querySnapshot.docs.forEach((values) {
+            var userid = values["userid"];
 
-        listFriend.add(userid); // get user friend list
-      });
+            listFriend.add(userid); // get user friend list
+          });
+          List<String> newUser = <String>[""];
+          FirebaseFirestore.instance
+              .collection('users')
+              .where('userid', // remove friends from find friends list
+                  whereNotIn: (listFriend == null || listFriend.length == 0
+                      ? newUser
+                      : listFriend)) //if new user
+              .snapshots()
+              .forEach((querySnapshot) {
+            List<FriendsModel> listFriends = <FriendsModel>[];
 
-      FirebaseFirestore.instance
-          .collection('users')
-          .where('userid',
-              whereNotIn: listFriend) // remove friends from find friends list
-          .snapshots()
-          .forEach((querySnapshot) {
-        List<FriendsModel> listFriends = <FriendsModel>[];
+            querySnapshot.docs.forEach((doc) {
+              if (doc["userid"] != loginUser) {
+                FriendsModel friendsModel = new FriendsModel(
+                    doc["username"], doc["dpurl"], doc["userid"]);
+                listFriends.add(friendsModel);
+              }
+            });
 
-        querySnapshot.docs.forEach((doc) {
-          if (doc["userid"] != loginUser) {
-            FriendsModel friendsModel =
-                new FriendsModel(doc["username"], doc["dpurl"], doc["userid"]);
-            listFriends.add(friendsModel);
-          }
+            setState(() {
+              _listFriends = listFriends;
+              _isProgressBarShown = false;
+            });
+          });
+          // print('Friendsssssssssssssss---->$listFriend');
+          // setState(() {
+          //   _listFriend = listFriend;
+          //   _isProgressBarShown = false;
+          // });
         });
-
-        setState(() {
-          _listFriends = listFriends;
-          _isProgressBarShown = false;
-        });
-      });
-      // print('Friendsssssssssssssss---->$listFriend');
-      // setState(() {
-      //   _listFriend = listFriend;
-      //   _isProgressBarShown = false;
-      // });
-    });
   }
 
   sendRequest(String uid) {
@@ -161,7 +163,11 @@ class FriendsState extends State<FriendsPage> {
           .doc(uid)
           .collection('friends')
           .doc(loginUser)
-          .set({'status': 'pending', 'create_date': DateTime.now()});
+          .set({
+        'userid': loginUser,
+        'status': 'pending',
+        'create_date': DateTime.now()
+      });
       Fluttertoast.showToast(msg: "Friend Request Sent");
     } catch (e) {
       Fluttertoast.showToast(msg: "Error Friend Request unable to send");
