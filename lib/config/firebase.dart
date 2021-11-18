@@ -1,34 +1,36 @@
 import 'package:chat_app/screens/login_page.dart';
 import 'package:chat_app/screens/main_menu.dart';
+import 'package:chat_app/screens/register_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Service {
   final auth = FirebaseAuth.instance; //firebase authenticatio
   final userStore = FirebaseFirestore.instance;
+  final _codeController = TextEditingController();
   DocumentSnapshot snapshot;
+  final storage = new FlutterSecureStorage();
 
-  void saveLocally(String id, String value) async {
+  Future<void> saveLocally(String id, String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(id, value);
   }
 
-  void saveUserDetails(userid) async {
-    FirebaseFirestore.instance
+  Future<void> saveUserDetails(userid) async {
+    await FirebaseFirestore.instance
         .collection('users')
         .doc(userid)
         .get()
         .then((DocumentSnapshot documentSnapshot) {
-      if (documentSnapshot.exists) {
-        saveLocally("id", userid);
-        saveLocally("username", documentSnapshot.get('username'));
-        saveLocally("status", documentSnapshot.get('status'));
-        saveLocally("gender", documentSnapshot.get('gender'));
-        saveLocally("dpurl", documentSnapshot.get('dpurl'));
-        saveLocally("text_status", documentSnapshot.get('text_status'));
-      }
+      saveLocally("id", userid);
+      saveLocally("username", documentSnapshot.get('username'));
+      saveLocally("status", documentSnapshot.get('status'));
+      saveLocally("gender", documentSnapshot.get('gender'));
+      saveLocally("dpurl", documentSnapshot.get('dpurl'));
+      saveLocally("text_status", documentSnapshot.get('text_status'));
     });
   }
 
@@ -46,50 +48,151 @@ class Service {
   }
 
   // create user function
-  void createUser(context, email, password, username) async {
+  void createUser(Phonenumber, BuildContext context) async {
     try {
-      await auth
-          .createUserWithEmailAndPassword(email: email, password: password)
-          .then((value) => {
-                userStore.collection("users").doc(value.user.uid).set({
-                  "email": email,
-                  "username": username,
-                  "dpurl": "",
-                  "userid": value.user.uid,
-                  "gender": "",
-                  "age": "",
-                  "status": "active",
-                  "text_status": "",
-                  "cre_date": DateTime.now()
-                }),
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Login()))
-              });
+      await auth.verifyPhoneNumber(
+          phoneNumber: "+94" + Phonenumber,
+          verificationCompleted: (AuthCredential credential) async {
+            UserCredential result = await auth.signInWithCredential(credential);
+
+            User user = result.user;
+
+            if (user != null) {
+              await isNewUser(user.uid);
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => MainMenu()),
+                (route) => false,
+              );
+            }
+          },
+          verificationFailed: (FirebaseAuthException exception) {
+            print(exception);
+          },
+          codeSent: (String verificationId, [int forceResendingToken]) {
+            showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text("Give the code?"),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        TextField(
+                          controller: _codeController,
+                        ),
+                      ],
+                    ),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text("Confirm"),
+                        textColor: Colors.white,
+                        color: Colors.blue,
+                        onPressed: () async {
+                          final code = _codeController.text.trim();
+                          AuthCredential credential =
+                              PhoneAuthProvider.credential(
+                                  verificationId: verificationId,
+                                  smsCode: code);
+
+                          UserCredential result =
+                              await auth.signInWithCredential(credential);
+
+                          User user = result.user;
+
+                          if (user != null) {
+                            String userId = user.uid;
+                            await isNewUser(userId);
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MainMenu()),
+                              (route) => false,
+                            );
+                          } else {
+                            print("Error");
+                          }
+                        },
+                      )
+                    ],
+                  );
+                });
+          },
+          codeAutoRetrievalTimeout: null,
+          timeout: Duration(seconds: 60));
     } catch (e) {
       errorHandle(context, e);
     }
   }
 
+  //  void createUser(context, email, password, username) async {
+  //   try {
+  //     await auth
+  //         .createUserWithEmailAndPassword(email: email, password: password)
+  //         .then((value) => {
+  //               userStore.collection("users").doc(value.user.uid).set({
+  //                 "email": email,
+  //                 "username": username,
+  //                 "dpurl": "",
+  //                 "userid": value.user.uid,
+  //                 "gender": "",
+  //                 "age": "",
+  //                 "status": "active",
+  //                 "text_status": "",
+  //                 "cre_date": DateTime.now()
+  //               }),
+  //               if (value.user.uid != "")
+  //                 {
+  //                   saveUserDetails(value.user.uid),
+  //                   storeTokenAndDate(value.user.uid)
+  //                 },
+  //               userStore.collection("friends").doc(value.user.uid).set({}),
+  //               Navigator.pushAndRemoveUntil(
+  //                 context,
+  //                 MaterialPageRoute(builder: (context) => MainMenu()),
+  //                 (route) => false,
+  //               )
+  //             });
+  //   } catch (e) {
+  //     errorHandle(context, e);
+  //   }
+  // }
+
   // login user function
-  void loginUser(context, email, password) async {
-    try {
-      await auth
-          .signInWithEmailAndPassword(email: email, password: password)
-          .then((value) => {
-                if (value.user.uid != "") {saveUserDetails(value.user.uid)},
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => MainMenu()))
-              });
-    } catch (e) {
-      errorHandle(context, e);
-    }
-  }
+  // void loginUser(context, phone) async {
+  //   try {
+  //    ConfirmationResult confirmationResult  = await auth.signInWithPhoneNumber(phone);
+
+  //  confirmationResult.confirm(verificationCode)
+
+  //           User user = result.user;
+  //               if (value.user.uid != "") {saveUserDetails(value.user.uid)},
+  //               storeTokenAndDate(value.user.uid),
+  //               Navigator.pushAndRemoveUntil(
+  //                 context,
+  //                 MaterialPageRoute(builder: (context) => MainMenu()),
+  //                 (route) => false,
+  //               )
+
+  //   } catch (e) {
+  //     errorHandle(context, e);
+  //   }
+  // }
 
   // logout user function
   void loginOut(context) async {
     try {
-      await auth.signOut();
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await auth.signOut().whenComplete(() async {
+        prefs.clear();
+        await storage.delete(key: "token");
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => Register()),
+          (route) => false,
+        );
+      });
     } catch (e) {
       errorHandle(context, e);
     }
@@ -105,5 +208,36 @@ class Service {
             content: Text(e.toString()),
           );
         });
+  }
+
+  Future<void> storeTokenAndDate(String token) async {
+    await storage.write(key: "token", value: token);
+  }
+
+  Future<String> getToken() async {
+    return await storage.read(key: "token");
+  }
+
+  Future<void> isNewUser(userId) async {
+    var result = await userStore.collection("users").doc(userId).get();
+    if (!result.exists) {
+      await userStore.collection("users").doc(userId).set({
+        "email": "",
+        "username": "",
+        "dpurl": "",
+        "userid": userId,
+        "gender": "",
+        "age": "",
+        "status": "active",
+        "text_status": "",
+        "cre_date": DateTime.now()
+      });
+      await saveUserDetails(userId);
+      await storeTokenAndDate(userId);
+      await userStore.collection("friends").doc(userId).set({});
+    } else {
+      await saveUserDetails(userId);
+      await storeTokenAndDate(userId);
+    }
   }
 }

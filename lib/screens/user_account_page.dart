@@ -17,14 +17,19 @@ class _UserAccountState extends State<UserAccount> {
   SharedPreferences preferences;
   TextEditingController nameTextEditorController;
   TextEditingController statusTextEditorController;
+  TextEditingController ageTextEditorController;
   String id = "";
   String nickname = "";
   String status = "";
   String photourl = "";
+  String age = "";
+  String _radioVal = "";
+  int _radioSelected = 1;
   File imgeFileAvatar;
   bool isLoading = false;
   final FocusNode nameFocusNode = FocusNode();
   final FocusNode statusFocusNode = FocusNode();
+  final FocusNode ageFocusNode = FocusNode();
   Service service = Service();
 
   @override
@@ -41,9 +46,21 @@ class _UserAccountState extends State<UserAccount> {
     nickname = preferences.getString('username');
     status = preferences.getString('text_status');
     photourl = preferences.getString('dpurl');
+    age = preferences.getString('age');
+    _radioVal = preferences.getString('gender');
+    if (_radioVal == "male") {
+      _radioSelected = 1;
+    } else if (_radioVal == "female") {
+      _radioSelected = 2;
+    } else if (_radioVal == "other") {
+      _radioSelected = 3;
+    }
+    ;
 
+    print("Id-->$id");
     nameTextEditorController = TextEditingController(text: nickname);
     statusTextEditorController = TextEditingController(text: status);
+    ageTextEditorController = TextEditingController(text: age);
     setState(() {});
   }
 
@@ -79,7 +96,9 @@ class _UserAccountState extends State<UserAccount> {
                             .update({
                           "dpurl": photourl,
                           "text_status": status,
-                          "username": nickname
+                          "username": nickname,
+                          "age": age,
+                          "gender": _radioVal
                         }).then((value) async {
                           await preferences.setString("dpurl", photourl);
                           setState(() {
@@ -113,11 +132,15 @@ class _UserAccountState extends State<UserAccount> {
     FirebaseFirestore.instance.collection('users').doc(id).update({
       "dpurl": photourl,
       "text_status": status,
-      "username": nickname
+      "username": nickname,
+      "age": age,
+      "gender": _radioVal
     }).then((value) async {
       await preferences.setString("dpurl", photourl);
       await preferences.setString("text_status", status);
       await preferences.setString("username", nickname);
+      await preferences.setString("age", age);
+      await preferences.setString("gender", _radioVal);
       setState(() {
         isLoading = false;
       });
@@ -209,9 +232,9 @@ class _UserAccountState extends State<UserAccount> {
                       style: TextStyle(
                           fontStyle: FontStyle.italic,
                           fontWeight: FontWeight.bold,
-                          color: Colors.lightBlueAccent),
+                          color: Colors.black),
                     ),
-                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 10.0),
+                    margin: EdgeInsets.only(left: 10.0, bottom: 2.0, top: 1.0),
                   ),
                   Container(
                     child: Theme(
@@ -238,9 +261,9 @@ class _UserAccountState extends State<UserAccount> {
                       style: TextStyle(
                           fontStyle: FontStyle.italic,
                           fontWeight: FontWeight.bold,
-                          color: Colors.lightBlueAccent),
+                          color: Colors.black),
                     ),
-                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 10.0),
+                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
                   ),
                   Container(
                     child: Theme(
@@ -254,15 +277,111 @@ class _UserAccountState extends State<UserAccount> {
                         ),
                         controller: statusTextEditorController,
                         onChanged: (value) {
-                          nickname = value;
+                          status = value;
                         },
                         focusNode: statusFocusNode,
                       ),
                     ),
                     margin: EdgeInsets.only(left: 30.0, right: 30.0),
-                  )
+                  ),
+                  Container(
+                    child: Text(
+                      'Age: ',
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
+                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+                  ),
+                  Container(
+                    child: Theme(
+                      data: Theme.of(context)
+                          .copyWith(primaryColor: Colors.lightBlueAccent),
+                      child: TextField(
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          hintText: "24",
+                          contentPadding: EdgeInsets.all(5.0),
+                          hintStyle: TextStyle(color: Colors.grey),
+                        ),
+                        controller: ageTextEditorController,
+                        onChanged: (value) {
+                          age = value;
+                        },
+                        focusNode: ageFocusNode,
+                      ),
+                    ),
+                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                  ),
+                  Container(
+                    child: Text(
+                      'Gender: ',
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
+                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+                  ),
                 ],
                 crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+
+              Container(
+                child: Theme(
+                    data: Theme.of(context)
+                        .copyWith(primaryColor: Colors.lightBlueAccent),
+                    child: Row(
+                      children: [
+                        Text('Male',
+                            style: TextStyle(
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black)),
+                        Radio(
+                            value: 1,
+                            groupValue: _radioSelected,
+                            activeColor: Colors.blue,
+                            onChanged: (value) {
+                              setState(() {
+                                _radioSelected = value;
+                                _radioVal = 'male';
+                              });
+                            }),
+                        Text('Female',
+                            style: TextStyle(
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black)),
+                        Radio(
+                            value: 2,
+                            groupValue: _radioSelected,
+                            activeColor: Colors.blue,
+                            onChanged: (value) {
+                              setState(() {
+                                _radioSelected = value;
+                                _radioVal = 'female';
+                              });
+                            }),
+                        Text('Other',
+                            style: TextStyle(
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black)),
+                        Radio(
+                            value: 3,
+                            groupValue: _radioSelected,
+                            activeColor: Colors.blue,
+                            onChanged: (value) {
+                              setState(() {
+                                _radioSelected = value;
+                                _radioVal = 'other';
+                              });
+                            })
+                      ],
+                    )),
+                margin: EdgeInsets.only(left: 30.0, right: 30.0),
               ),
               Container(
                 child: FlatButton(
@@ -271,13 +390,13 @@ class _UserAccountState extends State<UserAccount> {
                     "Update",
                     style: TextStyle(fontSize: 16.0),
                   ),
-                  color: Colors.lightBlueAccent,
+                  color: Colors.blue,
                   highlightColor: Colors.grey,
                   splashColor: Colors.transparent,
                   textColor: Colors.white,
                   padding: EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
                 ),
-                margin: EdgeInsets.only(top: 50.0, bottom: 1.0),
+                margin: EdgeInsets.only(top: 30.0, bottom: 10.0),
               ),
               //logout
               Padding(

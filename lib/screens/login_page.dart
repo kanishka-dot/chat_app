@@ -47,8 +47,8 @@ class Login extends StatelessWidget {
                   if (emailEditingControler.text.isNotEmpty &&
                       passwordEditingControler.text.isNotEmpty)
                     {
-                      service.loginUser(context, emailEditingControler.text,
-                          passwordEditingControler.text)
+                      // service.loginUser(context, emailEditingControler.text,
+                      //     passwordEditingControler.text)
                     }
                   else
                     {

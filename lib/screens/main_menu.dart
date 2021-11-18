@@ -5,6 +5,7 @@ import 'package:chat_app/screens/user_account_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/config/color_palette.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainMenu extends StatefulWidget {
   MainMenu({Key key}) : super(key: key);
@@ -16,7 +17,7 @@ class MainMenu extends StatefulWidget {
 class FriendsState extends State<MainMenu> {
   var loginUser;
   // SharedPreferences preferences;
-  String photourl;
+  String photoUrl = "";
 
   int currentindex = 0;
   final screens = [
@@ -33,8 +34,11 @@ class FriendsState extends State<MainMenu> {
   }
 
   // Future getProfileImage() async {
-  //   preferences = await SharedPreferences.getInstance();
-  //   photourl = preferences.get('dpurl');
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String photourl = prefs.get('dpurl');
+  //   setState(() {
+  //     photoUrl = photourl;
+  //   });
   // }
 
   @override
@@ -65,9 +69,7 @@ class FriendsState extends State<MainMenu> {
           ),
           BottomNavigationBarItem(
             backgroundColor: themecolor,
-            icon: CircleAvatar(
-              backgroundImage: AssetImage('assets/person1.png'),
-            ),
+            icon: Icon(Icons.person),
             label: 'Account',
           ),
         ],

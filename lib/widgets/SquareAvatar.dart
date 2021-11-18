@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 @immutable
 class SquareAvatar extends StatelessWidget {
@@ -15,17 +16,18 @@ class SquareAvatar extends StatelessWidget {
       ),
       child: Stack(alignment: AlignmentDirectional.bottomCenter, children: [
         Container(
-          height: 40.0,
-          width: 40.0,
-          child: backgroundImage == ""
-              ? new Image.asset(
-                  'assets/person1.png',
-                )
-              : new Image.network(
-                  backgroundImage,
-                  fit: BoxFit.cover,
-                ),
-        ),
+            height: 40.0,
+            width: 40.0,
+            child: backgroundImage == ""
+                ? new Image.asset(
+                    'assets/person1.png',
+                  )
+                : CachedNetworkImage(
+                    fit: BoxFit.cover,
+                    imageUrl: backgroundImage == ""
+                        ? 'assets/person1.png'
+                        : backgroundImage,
+                  )),
         ConditionRender(isActive)
       ]),
     );

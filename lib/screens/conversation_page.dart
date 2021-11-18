@@ -1,11 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat_app/widgets/SquareAvatar.dart';
 import 'package:chat_app/widgets/message.dart';
 import 'package:flutter/material.dart';
 
 class Conversation extends StatelessWidget {
   var receiverid = "";
   var receiverName = "";
+  var dpurl = "";
 
-  Conversation(this.receiverid, this.receiverName);
+  Conversation(this.receiverid, this.receiverName, this.dpurl);
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +24,7 @@ class Conversation extends StatelessWidget {
       automaticallyImplyLeading: false,
       title: Row(
         children: [
-          CircleAvatar(
-            backgroundImage: AssetImage('assets/person1.png'),
-          ),
+          SquareAvatar(dpurl),
           SizedBox(
             width: 10,
           ),

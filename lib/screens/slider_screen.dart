@@ -12,28 +12,44 @@ class IntroSliderPage extends StatelessWidget {
           image: Image.asset(
             "assets/slide1.jpg",
             scale: 8,
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
           ),
+          decoration: PageDecoration(imageFlex: 5),
           title: "Hello love Seekers",
           body: "This is yours personal app"),
       PageViewModel(
           image: Image.asset(
             "assets/slide2.jpg",
             scale: 8,
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
           ),
+          decoration: PageDecoration(imageFlex: 5),
           title: "Hello love Seekers",
           body: "This is yours personal app"),
       PageViewModel(
           image: Image.asset(
             "assets/slide3.jpg",
             scale: 8,
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
           ),
+          decoration: PageDecoration(imageFlex: 5),
           title: "Hello love Seekers",
           body: "This is yours personal app"),
       PageViewModel(
           image: Image.asset(
             "assets/slide4.jpg",
             scale: 8,
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
           ),
+          decoration: PageDecoration(imageFlex: 5),
           title: "Hello love Seekers",
           body: "This is yours personal app")
     ];
@@ -52,7 +68,7 @@ class IntroSliderPage extends StatelessWidget {
         },
         onSkip: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Login()));
+              context, MaterialPageRoute(builder: (context) => Register()));
         },
         showNextButton: false,
         skip: Text('Skip'),
