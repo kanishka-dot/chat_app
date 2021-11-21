@@ -24,7 +24,7 @@ class _UserAccountState extends State<UserAccount> {
   String photourl = "";
   String age = "";
   String _radioVal = "";
-  int _radioSelected = 1;
+  int _radioSelected;
   File imgeFileAvatar;
   bool isLoading = false;
   final FocusNode nameFocusNode = FocusNode();
