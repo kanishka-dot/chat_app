@@ -55,7 +55,6 @@ class _UserAccountState extends State<UserAccount> {
     } else if (_radioVal == "other") {
       _radioSelected = 3;
     }
-    ;
 
     print("Id-->$id");
     nameTextEditorController = TextEditingController(text: nickname);

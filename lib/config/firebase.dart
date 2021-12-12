@@ -4,6 +4,7 @@ import 'package:chat_app/screens/register_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -50,6 +51,7 @@ class Service {
   // create user function
   void createUser(Phonenumber, BuildContext context) async {
     try {
+      EasyLoading.show(status: 'Please wait...');
       await auth.verifyPhoneNumber(
           phoneNumber: "+94" + Phonenumber,
           verificationCompleted: (AuthCredential credential) async {
@@ -59,6 +61,7 @@ class Service {
 
             if (user != null) {
               await isNewUser(user.uid);
+              EasyLoading.dismiss();
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => MainMenu()),
@@ -70,12 +73,15 @@ class Service {
             print(exception);
           },
           codeSent: (String verificationId, [int forceResendingToken]) {
+            EasyLoading.dismiss();
             showDialog(
                 context: context,
                 barrierDismissible: false,
                 builder: (context) {
                   return AlertDialog(
-                    title: Text("Give the code?"),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(32.0))),
+                    title: Text("Please enter the OTP"),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
@@ -90,6 +96,7 @@ class Service {
                         textColor: Colors.white,
                         color: Colors.blue,
                         onPressed: () async {
+                          EasyLoading.show(status: 'Please wait...');
                           final code = _codeController.text.trim();
                           AuthCredential credential =
                               PhoneAuthProvider.credential(
@@ -104,6 +111,7 @@ class Service {
                           if (user != null) {
                             String userId = user.uid;
                             await isNewUser(userId);
+                            EasyLoading.dismiss();
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
@@ -111,6 +119,7 @@ class Service {
                               (route) => false,
                             );
                           } else {
+                            EasyLoading.showError('Failed with Error');
                             print("Error");
                           }
                         },
