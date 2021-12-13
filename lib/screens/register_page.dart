@@ -19,6 +19,7 @@ class _Register extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.amber,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 25),
