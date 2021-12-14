@@ -1,5 +1,6 @@
 import 'package:chat_app/config/firebase.dart';
 import 'package:chat_app/screens/login_page.dart';
+import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
@@ -11,8 +12,9 @@ class Register extends StatefulWidget {
 class _Register extends State<Register> {
   TextEditingController emailEditingControler = TextEditingController();
   TextEditingController userNameEditingControler = TextEditingController();
-  TextEditingController passwordEditingControler = TextEditingController();
+  TextEditingController mobileEditingControler = TextEditingController();
   String _radioVal = "";
+  DateTime selectedDate;
   int _radioSelected;
   Service service = Service();
 
@@ -33,99 +35,120 @@ class _Register extends State<Register> {
               Padding(
                 padding: const EdgeInsets.only(top: 12.0),
                 child: TextField(
-                  keyboardType: TextInputType.phone,
-                  controller: emailEditingControler,
+                  keyboardType: TextInputType.name,
+                  controller: userNameEditingControler,
                   decoration: InputDecoration(
-                      hintText: "Nick Name",
+                      hintText: "Name",
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20))),
                 ),
               ),
-              Padding(
-                  padding: const EdgeInsets.only(top: 12.0),
-                  child: Row(
-                    children: [
-                      Text('Male',
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black)),
-                      Radio(
-                          value: 1,
-                          groupValue: _radioSelected,
-                          activeColor: Colors.black,
-                          onChanged: (value) {
-                            setState(() {
-                              _radioSelected = value;
-                              _radioVal = 'male';
-                            });
-                          }),
-                      Text('Female',
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black)),
-                      Radio(
-                          value: 2,
-                          groupValue: _radioSelected,
-                          activeColor: Colors.black,
-                          onChanged: (value) {
-                            setState(() {
-                              _radioSelected = value;
-                              _radioVal = 'female';
-                            });
-                          }),
-                      Text('Other',
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black)),
-                      Radio(
-                          value: 3,
-                          groupValue: _radioSelected,
-                          activeColor: Colors.black,
-                          onChanged: (value) {
-                            setState(() {
-                              _radioSelected = value;
-                              _radioVal = 'other';
-                            });
-                          })
-                    ],
-                  )),
               Padding(
                 padding: const EdgeInsets.only(top: 12.0),
                 child: TextField(
                   keyboardType: TextInputType.phone,
-                  controller: emailEditingControler,
+                  controller: mobileEditingControler,
                   decoration: InputDecoration(
-                      hintText: "07XXXXXXXX",
+                      hintText: "Mobile No",
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20))),
                 ),
               ),
-              // Padding(
-              //   padding: const EdgeInsets.only(top: 12.0),
-              //   child: TextField(
-              //     controller: userNameEditingControler,
-              //     decoration: InputDecoration(
-              //         hintText: "User Name",
-              //         border: OutlineInputBorder(
-              //             borderRadius: BorderRadius.circular(20))),
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.only(top: 12.0, bottom: 5),
-              //   child: TextField(
-              //     controller: passwordEditingControler,
-              //     decoration: InputDecoration(
-              //         hintText: "Enter Password",
-              //         border: OutlineInputBorder(
-              //             borderRadius: BorderRadius.circular(20))),
-              //   ),
-              // ), {}
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: DateTimeFormField(
+                  mode: DateTimeFieldPickerMode.date,
+                  onDateSelected: (DateTime value) {
+                    setState(() {
+                      selectedDate = value;
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    hintText: 'Birthday',
+                    border: OutlineInputBorder(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(20))),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: TextField(
+                  keyboardType: TextInputType.emailAddress,
+                  controller: emailEditingControler,
+                  decoration: InputDecoration(
+                      hintText: "Email",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20))),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0, left: 8.0),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'Gender',
+                    style:
+                        TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15.0),
+                child: Row(
+                  children: [
+                    Text('Male',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black)),
+                    Radio(
+                        value: 1,
+                        groupValue: _radioSelected,
+                        activeColor: Colors.black,
+                        onChanged: (value) {
+                          setState(() {
+                            _radioSelected = value;
+                            _radioVal = 'male';
+                          });
+                        }),
+                    Text('Female',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black)),
+                    Radio(
+                        value: 2,
+                        groupValue: _radioSelected,
+                        activeColor: Colors.black,
+                        onChanged: (value) {
+                          setState(() {
+                            _radioSelected = value;
+                            _radioVal = 'female';
+                          });
+                        }),
+                    Text('Other',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black)),
+                    Radio(
+                        value: 3,
+                        groupValue: _radioSelected,
+                        activeColor: Colors.black,
+                        onChanged: (value) {
+                          setState(() {
+                            _radioSelected = value;
+                            _radioVal = 'other';
+                          });
+                        })
+                  ],
+                ),
+              ),
+
               ElevatedButton(
                 child: Text("CONTINUE"),
                 onPressed: () => {
