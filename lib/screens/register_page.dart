@@ -1,8 +1,9 @@
 import 'package:chat_app/config/firebase.dart';
-import 'package:chat_app/screens/login_page.dart';
+import 'package:chat_app/screens/friends_list_page.dart';
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -14,178 +15,234 @@ class _Register extends State<Register> {
   TextEditingController userNameEditingControler = TextEditingController();
   TextEditingController mobileEditingControler = TextEditingController();
   String _radioVal = "";
+  static final validateName = RegExp(r'^[a-zA-Z0-9_]+$', caseSensitive: false);
+  static final validateEmail = RegExp(
+      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
   DateTime selectedDate;
   int _radioSelected;
+  var maskFormatter = new MaskTextInputFormatter(
+      mask: '### ## #####', filter: {"#": RegExp(r'[0-9]')});
   Service service = Service();
+
+  bool validateFields() {
+    try {
+      if (userNameEditingControler.text.trim().isEmpty) {
+        throw ("Please enter a Name");
+      } else if (!validateName.hasMatch(userNameEditingControler.text)) {
+        throw ("use only Letter number and underscores for name");
+      } else if (maskFormatter.getUnmaskedText().trim().isEmpty) {
+        throw ("Please enter Mobile no");
+      } else if (selectedDate == null) {
+        throw ("Please enter Birthday");
+      } else if (emailEditingControler.text.trim().isEmpty) {
+        throw ("Please enter email");
+      } else if (!validateEmail.hasMatch(emailEditingControler.text)) {
+        throw ("Invalid  email address");
+      } else if (_radioVal.isEmpty) {
+        throw ("Please choose gender");
+      } else {
+        return true;
+      }
+    } catch (error) {
+      Fluttertoast.showToast(msg: error, gravity: ToastGravity.CENTER);
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.amber,
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 25),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Find Your Soul Mate',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 12.0),
-                child: TextField(
-                  keyboardType: TextInputType.name,
-                  controller: userNameEditingControler,
-                  decoration: InputDecoration(
-                      hintText: "Name",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20))),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 12.0),
-                child: TextField(
-                  keyboardType: TextInputType.phone,
-                  controller: mobileEditingControler,
-                  decoration: InputDecoration(
-                      hintText: "Mobile No",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20))),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 12.0),
-                child: DateTimeFormField(
-                  mode: DateTimeFieldPickerMode.date,
-                  onDateSelected: (DateTime value) {
-                    setState(() {
-                      selectedDate = value;
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    hintText: 'Birthday',
-                    border: OutlineInputBorder(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(20))),
+          padding: EdgeInsets.symmetric(horizontal: 0),
+          child: Container(
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                colorFilter: new ColorFilter.mode(
+                    Colors.black.withOpacity(0.3), BlendMode.dstATop),
+                image: AssetImage("assets/slide4.jpg"),
+                fit: BoxFit.cover,
+              )),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Text(
+                  //   'Find Your Soul Mate',
+                  //   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                  // ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 12.0, left: 12.0, right: 12.0),
+                    child: TextField(
+                      keyboardType: TextInputType.name,
+                      controller: userNameEditingControler,
+                      decoration: InputDecoration(
+                          hintText: "Name",
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                    ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 12.0),
-                child: TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  controller: emailEditingControler,
-                  decoration: InputDecoration(
-                      hintText: "Email",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20))),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 12.0, left: 8.0),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    'Gender',
-                    style:
-                        TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 12.0, left: 12.0, right: 12.0),
+                    child: TextField(
+                      inputFormatters: [maskFormatter],
+                      keyboardType: TextInputType.phone,
+                      controller: mobileEditingControler,
+                      decoration: InputDecoration(
+                          hintText: "Mobile No",
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                    ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15.0),
-                child: Row(
-                  children: [
-                    Text('Male',
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 12.0, left: 12.0, right: 12.0),
+                    child: DateTimeFormField(
+                      mode: DateTimeFieldPickerMode.date,
+                      onDateSelected: (DateTime value) {
+                        setState(() {
+                          selectedDate = value;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        hintText: 'Birthday',
+                        border: OutlineInputBorder(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(10))),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 12.0, left: 12.0, right: 12.0),
+                    child: TextField(
+                      keyboardType: TextInputType.emailAddress,
+                      controller: emailEditingControler,
+                      decoration: InputDecoration(
+                          hintText: "Email",
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12.0, left: 14.0),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        'Gender',
                         style: TextStyle(
-                            fontSize: 16,
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black)),
-                    Radio(
-                        value: 1,
-                        groupValue: _radioSelected,
-                        activeColor: Colors.black,
-                        onChanged: (value) {
-                          setState(() {
-                            _radioSelected = value;
-                            _radioVal = 'male';
-                          });
-                        }),
-                    Text('Female',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black)),
-                    Radio(
-                        value: 2,
-                        groupValue: _radioSelected,
-                        activeColor: Colors.black,
-                        onChanged: (value) {
-                          setState(() {
-                            _radioSelected = value;
-                            _radioVal = 'female';
-                          });
-                        }),
-                    Text('Other',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black)),
-                    Radio(
-                        value: 3,
-                        groupValue: _radioSelected,
-                        activeColor: Colors.black,
-                        onChanged: (value) {
-                          setState(() {
-                            _radioSelected = value;
-                            _radioVal = 'other';
-                          });
-                        })
-                  ],
-                ),
-              ),
+                            fontSize: 14, fontWeight: FontWeight.normal),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 22.0),
+                    child: Row(
+                      children: [
+                        Text('Male',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black)),
+                        Radio(
+                            value: 1,
+                            groupValue: _radioSelected,
+                            activeColor: Colors.black,
+                            onChanged: (value) {
+                              setState(() {
+                                _radioSelected = value;
+                                _radioVal = 'male';
+                              });
+                            }),
+                        Text('Female',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black)),
+                        Radio(
+                            value: 2,
+                            groupValue: _radioSelected,
+                            activeColor: Colors.black,
+                            onChanged: (value) {
+                              setState(() {
+                                _radioSelected = value;
+                                _radioVal = 'female';
+                              });
+                            }),
+                        Text('Other',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black)),
+                        Radio(
+                            value: 3,
+                            groupValue: _radioSelected,
+                            activeColor: Colors.black,
+                            onChanged: (value) {
+                              setState(() {
+                                _radioSelected = value;
+                                _radioVal = 'other';
+                              });
+                            })
+                      ],
+                    ),
+                  ),
 
-              ElevatedButton(
-                child: Text("CONTINUE"),
-                onPressed: () => {
-                  if (emailEditingControler.text.isNotEmpty)
-                    {
-                      if (emailEditingControler.text.length != 10)
-                        {service.errorHandle(context, "Invalid Phone Number")}
-                      else
-                        {
-                          EasyLoading.show(status: 'Please wait...'),
-                          service.createUser(
-                              emailEditingControler.text, context),
-                          EasyLoading.dismiss()
-                        }
-                    }
-                  else
-                    {service.errorHandle(context, "Please enter Phone Number")}
-                },
-                style: TextButton.styleFrom(
-                    primary: Colors.white,
-                    elevation: 3,
-                    backgroundColor: Colors.pink,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(32.0))),
-                    padding: EdgeInsets.symmetric(horizontal: 80)),
-              ),
-              // TextButton(
-              //   child: Text("Already have a account?"),
-              //   onPressed: () => {
-              //     Navigator.push(
-              //       context,
-              //       MaterialPageRoute(builder: (context) => Login()),
-              //     ),
-              //   },
-              // )
-            ],
-          ),
+                  ElevatedButton(
+                    child: Text("CONTINUE"),
+                    onPressed: () {
+                      if (validateFields()) {
+                        // EasyLoading.show(status: 'Please wait...');
+                        service.createUser(emailEditingControler.text, context);
+                        // EasyLoading.dismiss();
+                      }
+                    },
+                    style: TextButton.styleFrom(
+                        primary: Colors.white,
+                        elevation: 3,
+                        backgroundColor: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(32.0))),
+                        padding: EdgeInsets.symmetric(horizontal: 80)),
+                  ),
+
+                  ElevatedButton(
+                    child: Text("Check Friend List"),
+                    onPressed: () {
+                      if (true) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FriendsPage(
+                                      isReg: false,
+                                    )));
+                      }
+                    },
+                    style: TextButton.styleFrom(
+                        primary: Colors.white,
+                        elevation: 3,
+                        backgroundColor: Colors.pink,
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(32.0))),
+                        padding: EdgeInsets.symmetric(horizontal: 80)),
+                  ),
+                  // TextButton(
+                  //   child: Text("Already have a account?"),
+                  //   onPressed: () => {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(builder: (context) => Login()),
+                  //     ),
+                  //   },
+                  // )
+                ],
+              )),
         ),
       ),
     );
