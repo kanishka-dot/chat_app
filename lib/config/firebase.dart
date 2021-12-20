@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -20,6 +21,11 @@ class Service {
     prefs.setString(id, value);
   }
 
+  Future<void> saveLocallyDob(String id, int value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(id, value);
+  }
+
   Future<void> saveUserDetails(userid) async {
     await FirebaseFirestore.instance
         .collection('users')
@@ -30,6 +36,9 @@ class Service {
       saveLocally("username", documentSnapshot.get('username'));
       saveLocally("status", documentSnapshot.get('status'));
       saveLocally("gender", documentSnapshot.get('gender'));
+      Timestamp ts = documentSnapshot.get('dob');
+      int timeInMilSec = ts.microsecondsSinceEpoch;
+      saveLocallyDob("dob", timeInMilSec);
       saveLocally("dpurl", documentSnapshot.get('dpurl'));
       saveLocally("text_status", documentSnapshot.get('text_status'));
     });
@@ -49,28 +58,36 @@ class Service {
   }
 
   // create user function
-  void createUser(Phonenumber, BuildContext context) async {
+  void createUser(String name, String phonenumber, String email, DateTime dob,
+      String gender, BuildContext context) async {
     try {
       EasyLoading.show(status: 'Please wait...');
+      print("Print phone numer");
+      print(phonenumber);
       await auth.verifyPhoneNumber(
-          phoneNumber: "+94" + Phonenumber,
+          phoneNumber: "+94" + phonenumber,
           verificationCompleted: (AuthCredential credential) async {
             UserCredential result = await auth.signInWithCredential(credential);
 
             User user = result.user;
 
             if (user != null) {
-              await isNewUser(user.uid);
+              await isNewUser(user.uid, name, phonenumber, email, dob, gender);
               EasyLoading.dismiss();
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => MainMenu()),
+                MaterialPageRoute(
+                    builder: (context) => MainMenu(
+                          isReg: true,
+                        )),
                 (route) => false,
               );
             }
           },
           verificationFailed: (FirebaseAuthException exception) {
-            print(exception);
+            Fluttertoast.showToast(
+                msg: "Invalid OTP Code", gravity: ToastGravity.CENTER);
+            EasyLoading.dismiss();
           },
           codeSent: (String verificationId, [int forceResendingToken]) {
             EasyLoading.dismiss();
@@ -110,12 +127,15 @@ class Service {
 
                           if (user != null) {
                             String userId = user.uid;
-                            await isNewUser(userId);
+                            await isNewUser(
+                                userId, name, phonenumber, email, dob, gender);
                             EasyLoading.dismiss();
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => MainMenu()),
+                                  builder: (context) => MainMenu(
+                                        isReg: true,
+                                      )),
                               (route) => false,
                             );
                           } else {
@@ -129,7 +149,7 @@ class Service {
                 });
           },
           codeAutoRetrievalTimeout: null,
-          timeout: Duration(seconds: 60));
+          timeout: Duration(seconds: 80));
     } catch (e) {
       errorHandle(context, e);
     }
@@ -227,15 +247,17 @@ class Service {
     return await storage.read(key: "token");
   }
 
-  Future<void> isNewUser(userId) async {
+  Future<void> isNewUser(userId, String name, String phonenumber, String email,
+      DateTime dob, String gender) async {
     var result = await userStore.collection("users").doc(userId).get();
     if (!result.exists) {
       await userStore.collection("users").doc(userId).set({
-        "email": "",
-        "username": "",
+        "email": email,
+        "username": name,
         "dpurl": "",
         "userid": userId,
-        "gender": "",
+        "gender": gender,
+        "dob": dob,
         "age": "",
         "status": "active",
         "text_status": "",

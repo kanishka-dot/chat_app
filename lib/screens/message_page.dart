@@ -96,21 +96,24 @@ class _ShowMessage extends State<ShowMessage> {
                 itemBuilder: (context, i) {
                   QueryDocumentSnapshot x = snapshot.data.docs[i];
 
-                  return ListTile(
-                    leading: new SquareAvatar(
-                      x['dpurl'],
+                  return Column(children: <Widget>[
+                    ListTile(
+                      leading: new SquareAvatar(
+                        x['dpurl'],
+                      ),
+                      title: Text(
+                        x['username'],
+                      ),
+                      onTap: () => {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Conversation(
+                                    x['userid'], x['username'], x['dpurl'])))
+                      },
                     ),
-                    title: Text(
-                      x['username'],
-                    ),
-                    onTap: () => {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Conversation(
-                                  x['userid'], x['username'], x['dpurl'])))
-                    },
-                  );
+                    Divider()
+                  ]);
                 });
           });
     }

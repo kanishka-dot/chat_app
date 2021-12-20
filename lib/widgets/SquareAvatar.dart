@@ -12,7 +12,7 @@ class SquareAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: const BorderRadius.all(
-        Radius.circular(5.0),
+        Radius.circular(20.0),
       ),
       child: Stack(alignment: AlignmentDirectional.bottomCenter, children: [
         Container(

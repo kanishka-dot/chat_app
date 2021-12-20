@@ -1,5 +1,6 @@
 import 'package:chat_app/config/firebase.dart';
 import 'package:chat_app/screens/friends_list_page.dart';
+import 'package:chat_app/screens/main_menu.dart';
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -21,7 +22,9 @@ class _Register extends State<Register> {
   DateTime selectedDate;
   int _radioSelected;
   var maskFormatter = new MaskTextInputFormatter(
-      mask: '### ## #####', filter: {"#": RegExp(r'[0-9]')});
+      mask: '## ## #####', filter: {"#": RegExp(r'[0-9]')});
+  // var maskFormatter = new MaskTextInputFormatter(
+  //     mask: '### ### ####', filter: {"#": RegExp(r'[0-9]')});
   Service service = Service();
 
   bool validateFields() {
@@ -52,6 +55,7 @@ class _Register extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 0),
@@ -60,7 +64,7 @@ class _Register extends State<Register> {
                   image: DecorationImage(
                 colorFilter: new ColorFilter.mode(
                     Colors.black.withOpacity(0.3), BlendMode.dstATop),
-                image: AssetImage("assets/slide4.jpg"),
+                image: AssetImage("assets/slide1.jpg"),
                 fit: BoxFit.cover,
               )),
               child: Column(
@@ -90,7 +94,7 @@ class _Register extends State<Register> {
                       keyboardType: TextInputType.phone,
                       controller: mobileEditingControler,
                       decoration: InputDecoration(
-                          hintText: "Mobile No",
+                          hintText: "Mobile No(Ex-77 12 34567)",
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10))),
                     ),
@@ -196,9 +200,13 @@ class _Register extends State<Register> {
                     child: Text("CONTINUE"),
                     onPressed: () {
                       if (validateFields()) {
-                        // EasyLoading.show(status: 'Please wait...');
-                        service.createUser(emailEditingControler.text, context);
-                        // EasyLoading.dismiss();
+                        service.createUser(
+                            userNameEditingControler.text,
+                            maskFormatter.getUnmaskedText().toString(),
+                            emailEditingControler.text,
+                            selectedDate,
+                            _radioVal,
+                            context);
                       }
                     },
                     style: TextButton.styleFrom(
@@ -218,7 +226,7 @@ class _Register extends State<Register> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => FriendsPage(
+                                builder: (context) => MainMenu(
                                       isReg: false,
                                     )));
                       }

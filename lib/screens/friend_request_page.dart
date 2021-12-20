@@ -105,7 +105,7 @@ class FriendsState extends State<FriendsRequest> {
         querySnapshot.docs.forEach((doc) {
           if (doc["userid"] != loginUser) {
             FriendsModel friendsModel = new FriendsModel(
-                doc["username"], doc["dpurl"], doc["userid"], isPending);
+                doc["username"], doc["dpurl"], doc["userid"], isPending, "");
             listFriends.add(friendsModel);
           }
         });
