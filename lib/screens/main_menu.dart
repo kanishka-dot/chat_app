@@ -1,34 +1,50 @@
 import 'package:chat_app/screens/friend_request_page.dart';
 import 'package:chat_app/screens/friends_list_page.dart';
 import 'package:chat_app/screens/message_page.dart';
+import 'package:chat_app/screens/user_account.dart';
 import 'package:chat_app/screens/user_account_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/config/color_palette.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class MainMenu extends StatefulWidget {
-  MainMenu({Key key}) : super(key: key);
-
+  final bool isReg;
   @override
-  FriendsState createState() => new FriendsState();
+  MainMenuState createState() => new MainMenuState(isReg: isReg);
+  MainMenu({@required this.isReg});
 }
 
-class FriendsState extends State<MainMenu> {
+class MainMenuState extends State<MainMenu> {
   var loginUser;
   // SharedPreferences preferences;
   String photoUrl = "";
-
   int currentindex = 0;
-  final screens = [
-    Messages(),
-    FriendsPage(),
-    FriendsRequest(),
-    UserAccount(),
-  ];
+  bool isReg;
+  List<dynamic> screens = [];
+  // List<String> _listFriend;
+  MainMenuState({@required this.isReg}) {
+    screens = [
+      Messages(),
+
+      FriendsPage(
+        isReg: isReg,
+      ),
+      FriendsRequest(),
+      // UserAccount(),
+      UserAccountOptions()
+    ];
+  }
+
   @override
   void initState() {
     super.initState();
     loginUser = FirebaseAuth.instance.currentUser;
+    if (isReg) {
+      currentindex = 0;
+    } else {
+      currentindex = 1;
+    }
     // getProfileImage();
   }
 
@@ -49,25 +65,34 @@ class FriendsState extends State<MainMenu> {
       body: screens[currentindex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentindex,
-        onTap: (index) => setState(() => {currentindex = index}),
+        onTap: (index) => setState(() => {
+              if (isReg)
+                {currentindex = index}
+              else
+                {
+                  Fluttertoast.showToast(
+                      msg: "Please Register to acces more features",
+                      gravity: ToastGravity.CENTER)
+                }
+            }),
         items: [
           BottomNavigationBarItem(
-            backgroundColor: themecolor,
+            backgroundColor: bottomNavColor,
             icon: Icon(Icons.message),
             label: 'Messages',
           ),
           BottomNavigationBarItem(
-            backgroundColor: themecolor,
+            backgroundColor: bottomNavColor,
             icon: Icon(Icons.people_alt),
             label: 'Find Friends',
           ),
           BottomNavigationBarItem(
-            backgroundColor: themecolor,
+            backgroundColor: bottomNavColor,
             icon: Icon(Icons.notifications),
             label: 'Request',
           ),
           BottomNavigationBarItem(
-            backgroundColor: themecolor,
+            backgroundColor: bottomNavColor,
             icon: Icon(Icons.person),
             label: 'Account',
           ),

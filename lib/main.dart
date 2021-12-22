@@ -62,7 +62,9 @@ class _MyApp extends State<MyApp> {
 
     if (token != null) {
       setState(() {
-        currentPage = MainMenu();
+        currentPage = MainMenu(
+          isReg: true,
+        );
       });
     }
   }

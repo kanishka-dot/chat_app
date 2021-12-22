@@ -8,13 +8,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class FriendsPage extends StatefulWidget {
   final bool isReg;
-
   @override
   FriendsState createState() => new FriendsState(isReg: isReg);
   FriendsPage({@required this.isReg});
 }
 
 class FriendsState extends State<FriendsPage> {
+  var loginUser = FirebaseAuth.instance.currentUser.uid;
   bool _isProgressBarShown = true;
   final _biggerFont = const TextStyle(fontSize: 13.0);
   List<FriendsModel> _listFriends;
@@ -25,13 +25,12 @@ class FriendsState extends State<FriendsPage> {
   @override
   void initState() {
     super.initState();
-    // if (isReg) {
-    //   _getFriendList();
-    // } else {
+    if (isReg) {
+      _getFriendList();
+    } else {
+      _getAllUsersList();
+    }
 
-    // }
-
-    _getAllUsersList();
     // _fetchFriendsList();
   }
 
@@ -67,7 +66,6 @@ class FriendsState extends State<FriendsPage> {
 
   Widget _buildRow(FriendsModel friendsModel) {
     return new ListTile(
-      subtitle: Text("hello"),
       leading: new SquareAvatar(
         friendsModel.profileImageUrl,
       ), //custom widget SquareAvatar
@@ -101,7 +99,7 @@ class FriendsState extends State<FriendsPage> {
   Future _getFriendList() async {
     FirebaseFirestore.instance
         .collection('friends')
-        .doc(FirebaseAuth.instance.currentUser.uid)
+        .doc(loginUser)
         .collection('friends')
         .where('status', whereIn: ['accept', 'pending', 'sent'])
         .snapshots()
@@ -139,7 +137,7 @@ class FriendsState extends State<FriendsPage> {
                 isPending = false;
               }
               //void loged user
-              if (doc["userid"] != FirebaseAuth.instance.currentUser.uid) {
+              if (doc["userid"] != loginUser) {
                 FriendsModel friendsModel = new FriendsModel(
                     doc["username"], doc["dpurl"], doc["userid"], isPending);
                 listFriends.add(friendsModel);
@@ -160,48 +158,61 @@ class FriendsState extends State<FriendsPage> {
   }
 
   Future _getAllUsersList() async {
-    // FirebaseFirestore.instance
-    //     .collection('friends')
-    //     .snapshots()
-    //     .forEach((querySnapshot) {
-    //   List<String> listFriend = <String>[];
-    //   List<String> sentFriend = <String>[];
-    //   if (querySnapshot.size > 0) {
-    //     querySnapshot.docs.forEach((values) {
-    //       var userid = values["userid"];
-    //       if (values["status"] == 'sent') {
-    //         print(userid);
-    //         sentFriend.add(userid);
-    //       } else {
-    //         listFriend.add(userid); // get user friend list
-    //       }
-    //     });
-    //   }
-
-    List<String> newUser = <String>[""];
     FirebaseFirestore.instance
-        .collection('users') //if new user
+        .collection('friends')
         .snapshots()
         .forEach((querySnapshot) {
-      List<FriendsModel> listFriends = <FriendsModel>[];
-      bool isPending = true;
+      List<String> listFriend = <String>[];
+      List<String> sentFriend = <String>[];
+      if (querySnapshot.size > 0) {
+        querySnapshot.docs.forEach((values) {
+          var userid = values["userid"];
+          if (values["status"] == 'sent') {
+            print(userid);
+            sentFriend.add(userid);
+          } else {
+            listFriend.add(userid); // get user friend list
+          }
+        });
+      }
 
-      querySnapshot.docs.forEach((doc) {
-        FriendsModel friendsModel = new FriendsModel(
-            doc["username"], doc["dpurl"], doc["userid"], isPending);
-        listFriends.add(friendsModel);
-      });
+      List<String> newUser = <String>[""];
+      FirebaseFirestore.instance
+          .collection('users')
+          .where('userid', // remove friends from find friends list
+              whereNotIn: (listFriend == null || listFriend.length == 0
+                  ? newUser
+                  : listFriend)) //if new user
+          .snapshots()
+          .forEach((querySnapshot) {
+        List<FriendsModel> listFriends = <FriendsModel>[];
+        bool isPending = false;
 
-      setState(() {
-        _listFriends = listFriends;
-        _isProgressBarShown = false;
+        querySnapshot.docs.forEach((doc) {
+          if (sentFriend.contains(doc["userid"])) {
+            isPending = true;
+          } else {
+            isPending = false;
+          }
+          //void loged user
+          if (doc["userid"] != loginUser) {
+            FriendsModel friendsModel = new FriendsModel(
+                doc["username"], doc["dpurl"], doc["userid"], isPending);
+            listFriends.add(friendsModel);
+          }
+        });
+
+        setState(() {
+          _listFriends = listFriends;
+          _isProgressBarShown = false;
+        });
       });
+      // print('Friendsssssssssssssss---->$listFriend');
+      // setState(() {
+      //   _listFriend = listFriend;
+      //   _isProgressBarShown = false;
+      // });
     });
-    // print('Friendsssssssssssssss---->$listFriend');
-    // setState(() {
-    //   _listFriend = listFriend;
-    //   _isProgressBarShown = false;
-    // });
   }
 
   sendRequest(String reciveruid) async {
@@ -212,7 +223,7 @@ class FriendsState extends State<FriendsPage> {
 
       await userStore
           .collection("users")
-          .doc(FirebaseAuth.instance.currentUser.uid)
+          .doc(loginUser)
           .get()
           .then((DocumentSnapshot documentSnapshot) {
         name = documentSnapshot.get('username');
@@ -227,15 +238,15 @@ class FriendsState extends State<FriendsPage> {
           .collection("friends")
           .doc(reciveruid)
           .collection('friends')
-          .doc(FirebaseAuth.instance.currentUser.uid)
+          .doc(loginUser)
           .set({
-        'userid': FirebaseAuth.instance.currentUser.uid,
+        'userid': loginUser,
         'status': 'pending',
         'create_date': DateTime.now()
       });
       userStore
           .collection("friends")
-          .doc(FirebaseAuth.instance.currentUser.uid)
+          .doc(loginUser)
           .collection('friends')
           .doc(reciveruid)
           .set({

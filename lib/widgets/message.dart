@@ -46,7 +46,7 @@ class _MessageState extends State<Message> {
 
   readLocal() async {
     preferances = await SharedPreferences.getInstance();
-    id = preferances.getString("id") ?? "";
+    id = preferances.getString("id") ?? await service.getToken();
 
     if (id.hashCode <= receiverId.hashCode) {
       chatId = '$id-$receiverId';
@@ -130,7 +130,6 @@ class _MessageState extends State<Message> {
           );
         }
         return ListView.builder(
-            physics: ScrollPhysics(),
             reverse: true,
             itemCount: snapshot.data.docs.length,
             shrinkWrap: true,
