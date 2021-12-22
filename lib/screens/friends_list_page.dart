@@ -138,8 +138,8 @@ class FriendsState extends State<FriendsPage> {
               }
               //void loged user
               if (doc["userid"] != loginUser) {
-                FriendsModel friendsModel = new FriendsModel(
-                    doc["username"], doc["dpurl"], doc["userid"], isPending);
+                FriendsModel friendsModel = new FriendsModel(doc["username"],
+                    doc["dpurl"], doc["userid"], isPending, doc["age"]);
                 listFriends.add(friendsModel);
               }
             });
@@ -196,8 +196,8 @@ class FriendsState extends State<FriendsPage> {
           }
           //void loged user
           if (doc["userid"] != loginUser) {
-            FriendsModel friendsModel = new FriendsModel(
-                doc["username"], doc["dpurl"], doc["userid"], isPending);
+            FriendsModel friendsModel = new FriendsModel(doc["username"],
+                doc["dpurl"], doc["userid"], isPending, doc["age"]);
             listFriends.add(friendsModel);
           }
         });
