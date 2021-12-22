@@ -28,3 +28,17 @@ void main() {
     expect(find.text('1'), findsOneWidget);
   });
 }
+
+
+// Text(
+//   "Ordered at: " +
+//       DateFormat("dd MMMM, yyyy - hh:mmm aa")
+//           .format(
+//         DateTime.fromMillisecondsSinceEpoch(
+//             int.parse(
+//                 dataMap[EcommerceApp.orderTime])),
+//       ),
+//   style:
+//       TextStyle(color: Colors.grey, fontSize: 16.0),
+// )
+

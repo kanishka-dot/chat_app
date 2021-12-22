@@ -33,14 +33,39 @@ class Service {
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       saveLocally("id", userid);
-      saveLocally("username", documentSnapshot.get('username'));
-      saveLocally("status", documentSnapshot.get('status'));
-      saveLocally("gender", documentSnapshot.get('gender'));
-      Timestamp ts = documentSnapshot.get('dob');
+      saveLocally(
+          "username",
+          documentSnapshot.get('username') == null
+              ? ""
+              : documentSnapshot.get('username'));
+      saveLocally(
+          "status",
+          documentSnapshot.get('status') == null
+              ? ""
+              : documentSnapshot.get('status'));
+      saveLocally(
+          "gender",
+          documentSnapshot.get('gender') == null
+              ? ""
+              : documentSnapshot.get('gender'));
+      saveLocally(
+          "height",
+          documentSnapshot.get('height') == null
+              ? ""
+              : documentSnapshot.get('height'));
+      Timestamp ts = documentSnapshot.get('dob') == null ? "" : DateTime.now();
       int timeInMilSec = ts.microsecondsSinceEpoch;
       saveLocallyDob("dob", timeInMilSec);
-      saveLocally("dpurl", documentSnapshot.get('dpurl'));
-      saveLocally("text_status", documentSnapshot.get('text_status'));
+      saveLocally(
+          "dpurl",
+          documentSnapshot.get('dpurl') == null
+              ? ""
+              : documentSnapshot.get('dpurl'));
+      saveLocally(
+          "text_status",
+          documentSnapshot.get('text_status') == null
+              ? ""
+              : documentSnapshot.get('text_status'));
     });
   }
 
@@ -59,7 +84,7 @@ class Service {
 
   // create user function
   void createUser(String name, String phonenumber, String email, DateTime dob,
-      String gender, BuildContext context) async {
+      String gender, String height, BuildContext context) async {
     try {
       EasyLoading.show(status: 'Please wait...');
       print("Print phone numer");
@@ -72,7 +97,8 @@ class Service {
             User user = result.user;
 
             if (user != null) {
-              await isNewUser(user.uid, name, phonenumber, email, dob, gender);
+              await isNewUser(
+                  user.uid, name, phonenumber, email, dob, gender, height);
               EasyLoading.dismiss();
               Navigator.pushAndRemoveUntil(
                 context,
@@ -127,8 +153,8 @@ class Service {
 
                           if (user != null) {
                             String userId = user.uid;
-                            await isNewUser(
-                                userId, name, phonenumber, email, dob, gender);
+                            await isNewUser(userId, name, phonenumber, email,
+                                dob, gender, height);
                             EasyLoading.dismiss();
                             Navigator.pushAndRemoveUntil(
                               context,
@@ -149,7 +175,7 @@ class Service {
                 });
           },
           codeAutoRetrievalTimeout: null,
-          timeout: Duration(seconds: 80));
+          timeout: Duration(seconds: 100));
     } catch (e) {
       errorHandle(context, e);
     }
@@ -248,7 +274,7 @@ class Service {
   }
 
   Future<void> isNewUser(userId, String name, String phonenumber, String email,
-      DateTime dob, String gender) async {
+      DateTime dob, String gender, String height) async {
     var result = await userStore.collection("users").doc(userId).get();
     if (!result.exists) {
       await userStore.collection("users").doc(userId).set({
@@ -258,6 +284,7 @@ class Service {
         "userid": userId,
         "gender": gender,
         "dob": dob,
+        "height": height,
         "age": "",
         "status": "active",
         "text_status": "",

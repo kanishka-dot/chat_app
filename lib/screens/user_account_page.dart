@@ -42,7 +42,7 @@ class _UserAccountState extends State<UserAccount> {
     try {
       preferences = await SharedPreferences.getInstance();
       id = preferences.getString('id');
-
+      Timestamp ts;
       String token = await service.getToken();
       if (id == null) {
         await FirebaseFirestore.instance
@@ -54,7 +54,7 @@ class _UserAccountState extends State<UserAccount> {
           nickname = documentSnapshot.get("username");
           status = documentSnapshot.get("text_status");
           photourl = documentSnapshot.get("dpurl");
-          Timestamp ts = documentSnapshot.get('dob');
+          ts = documentSnapshot.get('dob');
           dob = DateTime.fromMicrosecondsSinceEpoch(ts.microsecondsSinceEpoch);
           _radioVal = documentSnapshot.get("gender");
         });
@@ -71,13 +71,13 @@ class _UserAccountState extends State<UserAccount> {
         _radioSelected = 1;
       } else if (_radioVal == "female") {
         _radioSelected = 2;
-      } else if (_radioVal == "other") {
-        _radioSelected = 3;
       }
       nameTextEditorController = TextEditingController(text: nickname);
       statusTextEditorController = TextEditingController(text: status);
 
-      setState(() {});
+      setState(() {
+        dob = DateTime.fromMicrosecondsSinceEpoch(ts.microsecondsSinceEpoch);
+      });
     } catch (error) {
       Fluttertoast.showToast(msg: "Error identify user profile");
     }

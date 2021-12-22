@@ -15,6 +15,7 @@ class _Register extends State<Register> {
   TextEditingController emailEditingControler = TextEditingController();
   TextEditingController userNameEditingControler = TextEditingController();
   TextEditingController mobileEditingControler = TextEditingController();
+  TextEditingController heightEditingControler = TextEditingController();
   String _radioVal = "";
   static final validateName = RegExp(r'^[a-zA-Z0-9_]+$', caseSensitive: false);
   static final validateEmail = RegExp(
@@ -23,6 +24,8 @@ class _Register extends State<Register> {
   int _radioSelected;
   var maskFormatter = new MaskTextInputFormatter(
       mask: '## ## #####', filter: {"#": RegExp(r'[0-9]')});
+  var heightFormater =
+      new MaskTextInputFormatter(mask: '#.##', filter: {"#": RegExp(r'[0-9]')});
   // var maskFormatter = new MaskTextInputFormatter(
   //     mask: '### ### ####', filter: {"#": RegExp(r'[0-9]')});
   Service service = Service();
@@ -41,6 +44,8 @@ class _Register extends State<Register> {
         throw ("Please enter email");
       } else if (!validateEmail.hasMatch(emailEditingControler.text)) {
         throw ("Invalid  email address");
+      } else if (heightFormater.getUnmaskedText().trim().isEmpty) {
+        throw ("Please enter height");
       } else if (_radioVal.isEmpty) {
         throw ("Please choose gender");
       } else {
@@ -64,7 +69,7 @@ class _Register extends State<Register> {
                   image: DecorationImage(
                 colorFilter: new ColorFilter.mode(
                     Colors.black.withOpacity(0.3), BlendMode.dstATop),
-                image: AssetImage("assets/slide1.jpg"),
+                image: AssetImage("assets/slide4.jpg"),
                 fit: BoxFit.cover,
               )),
               child: Column(
@@ -130,6 +135,19 @@ class _Register extends State<Register> {
                     ),
                   ),
                   Padding(
+                    padding: const EdgeInsets.only(
+                        top: 12.0, left: 12.0, right: 12.0),
+                    child: TextField(
+                      inputFormatters: [heightFormater],
+                      keyboardType: TextInputType.number,
+                      controller: heightEditingControler,
+                      decoration: InputDecoration(
+                          hintText: "Height(ft)",
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                    ),
+                  ),
+                  Padding(
                     padding: const EdgeInsets.only(top: 12.0, left: 14.0),
                     child: Align(
                       alignment: Alignment.topLeft,
@@ -176,22 +194,6 @@ class _Register extends State<Register> {
                                 _radioVal = 'female';
                               });
                             }),
-                        Text('Other',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontStyle: FontStyle.normal,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.black)),
-                        Radio(
-                            value: 3,
-                            groupValue: _radioSelected,
-                            activeColor: Colors.black,
-                            onChanged: (value) {
-                              setState(() {
-                                _radioSelected = value;
-                                _radioVal = 'other';
-                              });
-                            })
                       ],
                     ),
                   ),
@@ -206,6 +208,7 @@ class _Register extends State<Register> {
                             emailEditingControler.text,
                             selectedDate,
                             _radioVal,
+                            heightFormater.getMask().toString(),
                             context);
                       }
                     },
