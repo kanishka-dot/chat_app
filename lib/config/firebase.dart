@@ -35,37 +35,89 @@ class Service {
       saveLocally("id", userid);
       saveLocally(
           "username",
-          documentSnapshot.get('username') == null
-              ? ""
-              : documentSnapshot.get('username'));
+          documentSnapshot.data().toString().contains('username')
+              ? documentSnapshot.get('username')
+              : '');
       saveLocally(
           "status",
-          documentSnapshot.get('status') == null
-              ? ""
-              : documentSnapshot.get('status'));
+          documentSnapshot.data().toString().contains('status')
+              ? documentSnapshot.get('status')
+              : '');
       saveLocally(
           "gender",
-          documentSnapshot.get('gender') == null
-              ? ""
-              : documentSnapshot.get('gender'));
+          documentSnapshot.data().toString().contains('gender')
+              ? documentSnapshot.get('gender')
+              : '');
       saveLocally(
           "height",
-          documentSnapshot.get('height') == null
-              ? ""
-              : documentSnapshot.get('height'));
-      Timestamp ts = documentSnapshot.get('dob') == null ? "" : DateTime.now();
+          documentSnapshot.data().toString().contains('height')
+              ? documentSnapshot.get('height')
+              : '');
+      Timestamp ts = documentSnapshot.data().toString().contains('dob')
+          ? documentSnapshot.get('dob')
+          : DateTime.now();
       int timeInMilSec = ts.microsecondsSinceEpoch;
       saveLocallyDob("dob", timeInMilSec);
+
       saveLocally(
           "dpurl",
-          documentSnapshot.get('dpurl') == null
-              ? ""
-              : documentSnapshot.get('dpurl'));
+          documentSnapshot.data().toString().contains('dpurl')
+              ? documentSnapshot.get('dpurl')
+              : '');
       saveLocally(
           "text_status",
-          documentSnapshot.get('text_status') == null
-              ? ""
-              : documentSnapshot.get('text_status'));
+          documentSnapshot.data().toString().contains('text_status')
+              ? documentSnapshot.get('text_status')
+              : '');
+      saveLocally(
+          "username",
+          documentSnapshot.data().toString().contains('username')
+              ? documentSnapshot.get('username')
+              : '');
+
+      //additional information
+
+      saveLocally(
+          "martial",
+          documentSnapshot.data().toString().contains('martial')
+              ? documentSnapshot.get('martial')
+              : '');
+
+      saveLocally(
+          "nochildrn",
+          documentSnapshot.data().toString().contains('nochildrn')
+              ? documentSnapshot.get('nochildrn')
+              : '');
+
+      saveLocally(
+          "country",
+          documentSnapshot.data().toString().contains('country')
+              ? documentSnapshot.get('country')
+              : '');
+
+      saveLocally(
+          "residstat",
+          documentSnapshot.data().toString().contains('residstat')
+              ? documentSnapshot.get('residstat')
+              : '');
+
+      saveLocally(
+          "residcity",
+          documentSnapshot.data().toString().contains('residcity')
+              ? documentSnapshot.get('residcity')
+              : '');
+
+      saveLocally(
+          "citzne",
+          documentSnapshot.data().toString().contains('citzne')
+              ? documentSnapshot.get('citzne')
+              : '');
+
+      saveLocally(
+          "job",
+          documentSnapshot.data().toString().contains('job')
+              ? documentSnapshot.get('job')
+              : '');
     });
   }
 
@@ -286,6 +338,13 @@ class Service {
         "dob": dob,
         "height": height,
         "age": "",
+        "martial": "",
+        "nochildrn": "",
+        "country": "",
+        "residstat": "",
+        "residcity": "",
+        "citzne": "",
+        "job": "",
         "status": "active",
         "text_status": "",
         "cre_date": DateTime.now()

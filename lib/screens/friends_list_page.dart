@@ -1,3 +1,4 @@
+import 'package:chat_app/screens/profile_card.dart';
 import 'package:chat_app/widgets/SquareAvatar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -63,6 +64,7 @@ class FriendsState extends State<FriendsPage> {
 
   Widget _buildRow(FriendsModel friendsModel) {
     return new ListTile(
+      isThreeLine: true,
       leading: new SquareAvatar(
         friendsModel.profileImageUrl,
       ), //custom widget SquareAvatar
@@ -71,7 +73,7 @@ class FriendsState extends State<FriendsPage> {
         style: _biggerFont,
       ),
       subtitle: Text(
-        "Age:" + friendsModel.age,
+        "Age:" + friendsModel.age + "\n City:" + friendsModel.city,
       ),
       trailing: ElevatedButton(
         onPressed: friendsModel.isPending
@@ -91,120 +93,149 @@ class FriendsState extends State<FriendsPage> {
         ),
       ),
       onTap: () {
-        setState(() {});
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => ProfileCard(friendsModel)));
       },
     );
   }
 
   Future _getFriendList() async {
-    var userid = FirebaseAuth.instance.currentUser.uid;
-    FirebaseFirestore.instance
-        .collection('friends')
-        .doc(userid)
-        .collection('friends')
-        .where('status', whereIn: ['accept', 'pending', 'sent'])
-        .snapshots()
-        .forEach((querySnapshot) {
-          List<String> listFriend = <String>[];
-          List<String> sentFriend = <String>[];
-          if (querySnapshot.size > 0) {
-            querySnapshot.docs.forEach((values) {
-              var userid = values["userid"];
-              if (values["status"] == 'sent') {
-                print(userid);
-                sentFriend.add(userid);
-              } else {
-                listFriend.add(userid); // get user friend list
-              }
-            });
-          }
+    try {
+      var userid = FirebaseAuth.instance.currentUser.uid;
+      FirebaseFirestore.instance
+          .collection('friends')
+          .doc(userid)
+          .collection('friends')
+          .where('status', whereIn: ['accept', 'pending', 'sent'])
+          .snapshots()
+          .forEach((querySnapshot) {
+            List<String> listFriend = <String>[];
+            List<String> sentFriend = <String>[];
+            if (querySnapshot.size > 0) {
+              querySnapshot.docs.forEach((values) {
+                var userid = values["userid"];
+                if (values["status"] == 'sent') {
+                  print(userid);
+                  sentFriend.add(userid);
+                } else {
+                  listFriend.add(userid); // get user friend list
+                }
+              });
+            }
 
-          List<String> newUser = <String>[""];
-          FirebaseFirestore.instance
-              .collection('users')
-              .where('userid', // remove friends from find friends list
-                  whereNotIn: (listFriend == null || listFriend.length == 0
-                      ? newUser
-                      : listFriend)) //if new user
-              .snapshots()
-              .forEach((querySnapshot) {
-            List<FriendsModel> listFriends = <FriendsModel>[];
-            bool isPending = false;
+            List<String> newUser = <String>[""];
+            FirebaseFirestore.instance
+                .collection('users')
+                .where('userid', // remove friends from find friends list
+                    whereNotIn: (listFriend == null || listFriend.length == 0
+                        ? newUser
+                        : listFriend)) //if new user
+                .snapshots()
+                .forEach((querySnapshot) {
+              List<FriendsModel> listFriends = <FriendsModel>[];
+              bool isPending = false;
 
-            querySnapshot.docs.forEach((doc) {
-              if (sentFriend.contains(doc["userid"])) {
-                isPending = true;
-              } else {
-                isPending = false;
-              }
-              //void loged user
-              if (doc["userid"] != FirebaseAuth.instance.currentUser.uid) {
-                FriendsModel friendsModel = new FriendsModel(doc["username"],
-                    doc["dpurl"], doc["userid"], isPending, doc["age"]);
-                listFriends.add(friendsModel);
-              }
-            });
+              querySnapshot.docs.forEach((doc) {
+                if (sentFriend.contains(doc["userid"])) {
+                  isPending = true;
+                } else {
+                  isPending = false;
+                }
 
-            setState(() {
-              _listFriends = listFriends;
-              _isProgressBarShown = false;
+                String age = findAge(doc.get('dob')).toString();
+                //void loged user
+                if (doc["userid"] != FirebaseAuth.instance.currentUser.uid) {
+                  FriendsModel friendsModel = new FriendsModel(
+                    doc.data().toString().contains('username')
+                        ? doc.get('username')
+                        : '',
+                    doc.data().toString().contains('dpurl')
+                        ? doc.get('dpurl')
+                        : '',
+                    doc.data().toString().contains('userid')
+                        ? doc.get('userid')
+                        : '',
+                    isPending,
+                    age,
+                    doc.data().toString().contains('text_status')
+                        ? doc.get('text_status')
+                        : '',
+                    doc.data().toString().contains('gender')
+                        ? doc.get('gender')
+                        : '',
+                    doc.data().toString().contains('height')
+                        ? doc.get('height')
+                        : '',
+                    doc.data().toString().contains('residcity')
+                        ? doc.get('residcity')
+                        : '',
+                  );
+                  listFriends.add(friendsModel);
+                }
+              });
+
+              setState(() {
+                _listFriends = listFriends;
+                _isProgressBarShown = false;
+              });
             });
           });
-          // print('Friendsssssssssssssss---->$listFriend');
-          // setState(() {
-          //   _listFriend = listFriend;
-          //   _isProgressBarShown = false;
-          // });
-        });
+    } catch (error) {
+      setState(() {
+        _listFriends = [];
+        _isProgressBarShown = false;
+      });
+    }
   }
 
   Future _getAllUsersList() async {
-    // FirebaseFirestore.instance
-    //     .collection('friends')
-    //     .snapshots()
-    //     .forEach((querySnapshot) {
-    //   List<String> listFriend = <String>[];
-    //   List<String> sentFriend = <String>[];
-    //   if (querySnapshot.size > 0) {
-    //     querySnapshot.docs.forEach((values) {
-    //       var userid = values["userid"];
-    //       if (values["status"] == 'sent') {
-    //         print(userid);
-    //         sentFriend.add(userid);
-    //       } else {
-    //         listFriend.add(userid); // get user friend list
-    //       }
-    //     });
-    //   }
+    try {
+      List<String> newUser = <String>[""];
+      FirebaseFirestore.instance
+          .collection('users')
+          .snapshots()
+          .forEach((querySnapshot) {
+        List<FriendsModel> listFriends = <FriendsModel>[];
+        bool isPending = false;
 
-    List<String> newUser = <String>[""];
-    FirebaseFirestore.instance
-        .collection('users')
-        .snapshots()
-        .forEach((querySnapshot) {
-      List<FriendsModel> listFriends = <FriendsModel>[];
-      bool isPending = false;
+        querySnapshot.docs.forEach((doc) {
+          // int age = currentyear - byear;
 
-      querySnapshot.docs.forEach((doc) {
-        isPending = true;
-        //void loged user
+          // print(age);
+          String age = findAge(doc.get('dob')).toString();
 
-        FriendsModel friendsModel = new FriendsModel(doc["username"],
-            doc["dpurl"], doc["userid"], isPending, doc["age"]);
-        listFriends.add(friendsModel);
+          isPending = true;
+          FriendsModel friendsModel = new FriendsModel(
+            doc.data().toString().contains('username')
+                ? doc.get('username')
+                : '',
+            doc.data().toString().contains('dpurl') ? doc.get('dpurl') : '',
+            doc.data().toString().contains('userid') ? doc.get('userid') : '',
+            isPending,
+            age,
+            doc.data().toString().contains('text_status')
+                ? doc.get('text_status')
+                : '',
+            doc.data().toString().contains('gender') ? doc.get('gender') : '',
+            doc.data().toString().contains('height') ? doc.get('height') : '',
+            doc.data().toString().contains('residcity')
+                ? doc.get('residcity')
+                : '',
+          );
+          listFriends.add(friendsModel);
+        });
+
+        setState(() {
+          _listFriends = listFriends;
+          _isProgressBarShown = false;
+        });
       });
-
+    } catch (error) {
       setState(() {
-        _listFriends = listFriends;
+        _listFriends = [];
         _isProgressBarShown = false;
       });
-    });
-    // print('Friendsssssssssssssss---->$listFriend');
-    // setState(() {
-    //   _listFriend = listFriend;
-    //   _isProgressBarShown = false;
-    // });
-    // });
+    }
   }
 
   sendRequest(String reciveruid) async {
@@ -249,6 +280,19 @@ class FriendsState extends State<FriendsPage> {
       Fluttertoast.showToast(msg: "Friend Request Sent");
     } catch (e) {
       Fluttertoast.showToast(msg: e);
+    }
+  }
+
+  int findAge(Timestamp dob) {
+    try {
+      int currentyear = DateTime.now().year;
+
+      DateTime dattime = dob.toDate();
+      int age = currentyear - dattime.year;
+
+      return age;
+    } catch (error) {
+      return 0;
     }
   }
 }

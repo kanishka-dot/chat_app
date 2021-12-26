@@ -19,7 +19,7 @@ class MainMenuState extends State<MainMenu> {
   var loginUser;
   // SharedPreferences preferences;
   String photoUrl = "";
-  int currentindex = 0;
+  int currentindex = 1;
   bool isReg;
   List<dynamic> screens = [];
   // List<String> _listFriend;
@@ -41,7 +41,7 @@ class MainMenuState extends State<MainMenu> {
     super.initState();
     loginUser = FirebaseAuth.instance.currentUser;
     if (isReg) {
-      currentindex = 0;
+      currentindex = 1;
     } else {
       currentindex = 1;
     }

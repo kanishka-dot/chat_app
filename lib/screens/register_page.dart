@@ -17,7 +17,7 @@ class _Register extends State<Register> {
   TextEditingController mobileEditingControler = TextEditingController();
   TextEditingController heightEditingControler = TextEditingController();
   String _radioVal = "";
-  static final validateName = RegExp(r'^[a-zA-Z0-9_]+$', caseSensitive: false);
+  static final validateName = RegExp(r'^[a-zA-Z0-9]+$', caseSensitive: false);
   static final validateEmail = RegExp(
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
   DateTime selectedDate;
@@ -208,7 +208,7 @@ class _Register extends State<Register> {
                             emailEditingControler.text,
                             selectedDate,
                             _radioVal,
-                            heightFormater.getMask().toString(),
+                            heightFormater.getMaskedText().toString(),
                             context);
                       }
                     },

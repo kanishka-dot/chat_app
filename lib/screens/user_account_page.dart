@@ -6,6 +6,7 @@ import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -19,31 +20,70 @@ class _UserAccountState extends State<UserAccount> {
   SharedPreferences preferences;
   TextEditingController nameTextEditorController;
   TextEditingController statusTextEditorController;
-  String id = "";
-  String nickname = "";
-  String status = "";
-  String photourl = "";
-  DateTime dob;
-  String _radioVal = "";
-  int _radioSelected;
-  File imgeFileAvatar;
-  bool isLoading = false;
+  TextEditingController heightEditingControler;
+  //addition information
+  TextEditingController noChildTextEditorController;
+  TextEditingController countryTextEditorController;
+  TextEditingController residStatTextEditorController;
+  TextEditingController residCityTextEditorController;
+  TextEditingController citzneTextEditorController;
+  TextEditingController jobTextEditorController;
+  //focus node
   final FocusNode nameFocusNode = FocusNode();
   final FocusNode statusFocusNode = FocusNode();
   final FocusNode ageFocusNode = FocusNode();
+  final FocusNode heightFocusNode = FocusNode();
+  final FocusNode noChildFocusNode = FocusNode();
+  final FocusNode countryFocusNode = FocusNode();
+  final FocusNode residStatFocusNode = FocusNode();
+  final FocusNode residCityFocusNode = FocusNode();
+  final FocusNode citzneFocusNode = FocusNode();
+  final FocusNode jobFocusNode = FocusNode();
+
+  Timestamp ts;
+  String id = "";
+  String nickname = "";
+  String status = "";
+  String height = "";
+  String photourl = "";
+  DateTime dob;
+  String _radioVal = "";
+  String _MartialradioVal = "";
+  //addition information
+  String noChild = "";
+  String country = "";
+  String residSta = "";
+  String residCit = "";
+  String citzne = "";
+  String job = "";
+  int _radioSelected;
+  int _MartialSelected;
+  File imgeFileAvatar;
+  bool isLoading = false;
+
+  var heightFormater =
+      new MaskTextInputFormatter(mask: '#.##', filter: {"#": RegExp(r'[0-9]')});
 
   @override
   void initState() {
     super.initState();
     readDataFromLocal();
+    // setState(() {
+    //   int timestamp = preferences.getInt('dob');
+    //   dob = DateTime.fromMicrosecondsSinceEpoch(timestamp);
+    // });
+    // setState(() {
+    //   dob = DateTime.now();
+    // });
   }
 
   void readDataFromLocal() async {
     try {
       preferences = await SharedPreferences.getInstance();
       id = preferences.getString('id');
-      Timestamp ts;
+      Timestamp timestamp;
       String token = await service.getToken();
+
       if (id == null) {
         await FirebaseFirestore.instance
             .collection("users")
@@ -51,35 +91,122 @@ class _UserAccountState extends State<UserAccount> {
             .get()
             .then((DocumentSnapshot documentSnapshot) {
           id = documentSnapshot.get("userid");
-          nickname = documentSnapshot.get("username");
-          status = documentSnapshot.get("text_status");
-          photourl = documentSnapshot.get("dpurl");
-          ts = documentSnapshot.get('dob');
-          dob = DateTime.fromMicrosecondsSinceEpoch(ts.microsecondsSinceEpoch);
-          _radioVal = documentSnapshot.get("gender");
+          nickname = documentSnapshot.data().toString().contains('username')
+              ? documentSnapshot.get('username')
+              : '';
+          status = documentSnapshot.data().toString().contains('text_status')
+              ? documentSnapshot.get('text_status')
+              : '';
+          photourl = documentSnapshot.data().toString().contains('dpurl')
+              ? documentSnapshot.get('dpurl')
+              : '';
+          height = documentSnapshot.data().toString().contains('height')
+              ? documentSnapshot.get('height')
+              : '';
+          // ts = documentSnapshot.get('dob');
+          // timestamp = documentSnapshot.data().toString().contains('dob')
+          //     ? documentSnapshot.get('dob')
+          //     : '';
+
+          _radioVal = documentSnapshot.data().toString().contains('gender')
+              ? documentSnapshot.get('gender')
+              : '';
+
+//additional info
+          _MartialradioVal =
+              documentSnapshot.data().toString().contains('martial')
+                  ? documentSnapshot.get('martial')
+                  : '';
+          noChild = documentSnapshot.data().toString().contains('nochildrn')
+              ? documentSnapshot.get('nochildrn')
+              : '';
+          country = documentSnapshot.data().toString().contains('country')
+              ? documentSnapshot.get('country')
+              : '';
+          residSta = documentSnapshot.data().toString().contains('residstat')
+              ? documentSnapshot.get('residstat')
+              : '';
+          residCit = documentSnapshot.data().toString().contains('residcity')
+              ? documentSnapshot.get('residcity')
+              : '';
+          citzne = documentSnapshot.data().toString().contains('citzne')
+              ? documentSnapshot.get('citzne')
+              : '';
+          job = documentSnapshot.data().toString().contains('job')
+              ? documentSnapshot.get('job')
+              : '';
         });
       } else {
-        nickname = preferences.getString('username');
-        status = preferences.getString('text_status');
-        photourl = preferences.getString('dpurl');
-        int timestamp = preferences.getInt('dob');
-        dob = DateTime.fromMicrosecondsSinceEpoch(timestamp);
-        _radioVal = preferences.getString('gender');
+        nickname = preferences.containsKey('username')
+            ? preferences.getString('username')
+            : '';
+        status = preferences.containsKey('text_status')
+            ? preferences.getString('text_status')
+            : '';
+        photourl = preferences.containsKey('dpurl')
+            ? preferences.getString('dpurl')
+            : '';
+        timestamp =
+            preferences.containsKey('dob') ? preferences.get('dob') : '';
+        _radioVal =
+            preferences.containsKey('gender') ? preferences.get('gender') : '';
+        height =
+            preferences.containsKey('height') ? preferences.get('height') : '';
+//additional info preferances
+        _MartialradioVal = preferences.containsKey('martial')
+            ? preferences.getString('martial')
+            : '';
+        noChild = preferences.containsKey('nochildrn')
+            ? preferences.getString('nochildrn')
+            : '';
+        country = preferences.containsKey('country')
+            ? preferences.getString('country')
+            : '';
+        residSta = preferences.containsKey('residstat')
+            ? preferences.getString('residstat')
+            : '';
+        residCit = preferences.containsKey('residcity')
+            ? preferences.getString('residcity')
+            : '';
+        citzne = preferences.containsKey('citzne')
+            ? preferences.getString('citzne')
+            : '';
+        job =
+            preferences.containsKey('job') ? preferences.getString('job') : '';
       }
-
-      if (_radioVal == "male") {
-        _radioSelected = 1;
-      } else if (_radioVal == "female") {
-        _radioSelected = 2;
-      }
-      nameTextEditorController = TextEditingController(text: nickname);
-      statusTextEditorController = TextEditingController(text: status);
 
       setState(() {
-        dob = DateTime.fromMicrosecondsSinceEpoch(ts.microsecondsSinceEpoch);
+        if (_radioVal == "male") {
+          _radioSelected = 1;
+        } else if (_radioVal == "female") {
+          _radioSelected = 2;
+        }
+
+        if (_MartialradioVal == "unmaried") {
+          _MartialSelected = 1;
+        } else if (_MartialradioVal == "widower") {
+          _MartialSelected = 2;
+        } else if (_MartialradioVal == "divorced") {
+          _MartialSelected = 3;
+        } else if (_MartialradioVal == "separated") {
+          _MartialSelected = 4;
+        }
+        DateTime dattime = timestamp.toDate();
+        dob = dattime;
+        nameTextEditorController = TextEditingController(text: nickname);
+        statusTextEditorController = TextEditingController(text: status);
+        heightEditingControler = TextEditingController(text: height);
+
+        noChildTextEditorController = TextEditingController(text: noChild);
+        countryTextEditorController = TextEditingController(text: country);
+        residStatTextEditorController = TextEditingController(text: residSta);
+        residCityTextEditorController = TextEditingController(text: residCit);
+        citzneTextEditorController = TextEditingController(text: citzne);
+        jobTextEditorController = TextEditingController(text: job);
+        // dob = DateTime.fromMicrosecondsSinceEpoch(timestamp.toInt());
       });
     } catch (error) {
-      Fluttertoast.showToast(msg: "Error identify user profile");
+      Fluttertoast.showToast(msg: error);
     }
   }
 
@@ -114,10 +241,10 @@ class _UserAccountState extends State<UserAccount> {
                             .doc(id)
                             .update({
                           "dpurl": photourl,
-                          "text_status": status,
-                          "username": nickname,
-                          "dob": dob,
-                          "gender": _radioVal
+                          // "text_status": status,
+                          // "username": nickname,
+                          // "dob": dob,
+                          // "gender": _radioVal
                         }).then((value) async {
                           await preferences.setString("dpurl", photourl);
                           setState(() {
@@ -167,17 +294,35 @@ class _UserAccountState extends State<UserAccount> {
         "text_status": status,
         "username": nickname,
         "dob": dob,
-        "gender": _radioVal
+        "gender": _radioVal,
+        "height": height,
+        "martial": _MartialradioVal,
+        "nochildrn": noChild,
+        "country": country,
+        "residstat": residSta,
+        "residcity": residCit,
+        "citzne": citzne,
+        "job": job,
       }).then((value) async {
         await preferences.setString("dpurl", photourl);
         await preferences.setString("text_status", status);
         await preferences.setString("username", nickname);
         await preferences.setInt("dob", dob.microsecondsSinceEpoch);
         await preferences.setString("gender", _radioVal);
+
+        await preferences.setString("height", heightFormater.getMaskedText());
+        await preferences.setString("martial", _MartialradioVal);
+        await preferences.setString("nochildrn", noChild);
+        await preferences.setString("country", country);
+        await preferences.setString("residstat", residSta);
+        await preferences.setString("residcity", residCit);
+        await preferences.setString("citzne", citzne);
+        await preferences.setString("job", job);
+
         setState(() {
           isLoading = false;
         });
-        Fluttertoast.showToast(msg: "Update Successfully ");
+        Fluttertoast.showToast(msg: "Update Successfully");
       });
     } catch (error) {
       Fluttertoast.showToast(msg: error);
@@ -315,7 +460,7 @@ class _UserAccountState extends State<UserAccount> {
                               .copyWith(primaryColor: Colors.lightBlueAccent),
                           child: TextField(
                             decoration: InputDecoration(
-                                hintText: "Traveler",
+                                hintText: "I'm intrested to hike",
                                 contentPadding: EdgeInsets.all(5.0),
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: OutlineInputBorder(
@@ -377,6 +522,39 @@ class _UserAccountState extends State<UserAccount> {
                       ),
                       Container(
                         child: Text(
+                          'Height: ',
+                          style: TextStyle(
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black),
+                        ),
+                        margin:
+                            EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+                      ),
+                      Container(
+                        child: Theme(
+                          data: Theme.of(context)
+                              .copyWith(primaryColor: Colors.lightBlueAccent),
+                          child: TextField(
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [heightFormater],
+                            decoration: InputDecoration(
+                                hintText: "Height",
+                                contentPadding: EdgeInsets.all(5.0),
+                                hintStyle: TextStyle(color: Colors.grey),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10))),
+                            controller: heightEditingControler,
+                            onChanged: (value) {
+                              height = value;
+                            },
+                            focusNode: heightFocusNode,
+                          ),
+                        ),
+                        margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                      ),
+                      Container(
+                        child: Text(
                           'Gender: ',
                           style: TextStyle(
                               fontStyle: FontStyle.normal,
@@ -426,25 +604,308 @@ class _UserAccountState extends State<UserAccount> {
                                     _radioVal = 'female';
                                   });
                                 }),
-                            Text('Other',
-                                style: TextStyle(
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.black)),
-                            Radio(
-                                value: 3,
-                                groupValue: _radioSelected,
-                                activeColor: Colors.blue,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _radioSelected = value;
-                                    _radioVal = 'other';
-                                  });
-                                })
                           ],
                         )),
                     margin: EdgeInsets.only(left: 30.0, right: 30.0),
                   ),
+                  Container(
+                    child: Text(
+                      'Additional Information',
+                      style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
+                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+                  ),
+
+//additional information
+
+                  Container(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'Martial Status: ',
+                      style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black),
+                    ),
+                    margin: EdgeInsets.only(left: 10.0, bottom: 2.0, top: 1.0),
+                  ),
+                  Container(
+                    child: Theme(
+                        data: Theme.of(context)
+                            .copyWith(primaryColor: Colors.lightBlueAccent),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Radio(
+                                    value: 1,
+                                    groupValue: _MartialSelected,
+                                    activeColor: Colors.blue,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _MartialSelected = value;
+                                        _MartialradioVal = 'unmaried';
+                                      });
+                                    }),
+                                Text('Unmaried',
+                                    style: TextStyle(
+                                        fontStyle: FontStyle.normal,
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.black)),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Radio(
+                                    value: 2,
+                                    groupValue: _MartialSelected,
+                                    activeColor: Colors.blue,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _MartialSelected = value;
+                                        _MartialradioVal = 'widower';
+                                      });
+                                    }),
+                                Text('Widower',
+                                    style: TextStyle(
+                                        fontStyle: FontStyle.normal,
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.black)),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Radio(
+                                    value: 3,
+                                    groupValue: _MartialSelected,
+                                    activeColor: Colors.blue,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _MartialSelected = value;
+                                        _MartialradioVal = 'divorced';
+                                      });
+                                    }),
+                                Text('Divorced',
+                                    style: TextStyle(
+                                        fontStyle: FontStyle.normal,
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.black)),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Radio(
+                                    value: 4,
+                                    groupValue: _MartialSelected,
+                                    activeColor: Colors.blue,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _MartialSelected = value;
+                                        _MartialradioVal = 'separated';
+                                      });
+                                    }),
+                                Text('Separated',
+                                    style: TextStyle(
+                                        fontStyle: FontStyle.normal,
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.black)),
+                              ],
+                            ),
+                          ],
+                        )),
+                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                  ),
+                  Container(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'No of children: ',
+                      style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black),
+                    ),
+                    margin: EdgeInsets.only(left: 10.0, bottom: 2.0, top: 1.0),
+                  ),
+                  Container(
+                    child: Theme(
+                      data: Theme.of(context)
+                          .copyWith(primaryColor: Colors.lightBlueAccent),
+                      child: TextField(
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                            hintText: "2",
+                            contentPadding: EdgeInsets.all(5.0),
+                            hintStyle: TextStyle(color: Colors.grey),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                        controller: noChildTextEditorController,
+                        onChanged: (value) {
+                          noChild = value;
+                        },
+                        focusNode: noChildFocusNode,
+                      ),
+                    ),
+                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                  ),
+                  Container(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'Country Living In: ',
+                      style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black),
+                    ),
+                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+                  ),
+                  Container(
+                    child: Theme(
+                      data: Theme.of(context)
+                          .copyWith(primaryColor: Colors.lightBlueAccent),
+                      child: TextField(
+                        decoration: InputDecoration(
+                            hintText: "Sri Lanka",
+                            contentPadding: EdgeInsets.all(5.0),
+                            hintStyle: TextStyle(color: Colors.grey),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                        controller: countryTextEditorController,
+                        onChanged: (value) {
+                          country = value;
+                        },
+                        focusNode: countryFocusNode,
+                      ),
+                    ),
+                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                  ),
+                  Container(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'Resident State: ',
+                      style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black),
+                    ),
+                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+                  ),
+                  Container(
+                    child: Theme(
+                      data: Theme.of(context)
+                          .copyWith(primaryColor: Colors.lightBlueAccent),
+                      child: TextField(
+                        decoration: InputDecoration(
+                            hintText: "Western",
+                            contentPadding: EdgeInsets.all(5.0),
+                            hintStyle: TextStyle(color: Colors.grey),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                        controller: residStatTextEditorController,
+                        onChanged: (value) {
+                          residSta = value;
+                        },
+                        focusNode: residStatFocusNode,
+                      ),
+                    ),
+                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                  ),
+                  Container(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'Resident City: ',
+                      style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black),
+                    ),
+                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+                  ),
+                  Container(
+                    child: Theme(
+                      data: Theme.of(context)
+                          .copyWith(primaryColor: Colors.lightBlueAccent),
+                      child: TextField(
+                        decoration: InputDecoration(
+                            hintText: "Colombo",
+                            contentPadding: EdgeInsets.all(5.0),
+                            hintStyle: TextStyle(color: Colors.grey),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                        controller: residCityTextEditorController,
+                        onChanged: (value) {
+                          residCit = value;
+                        },
+                        focusNode: residCityFocusNode,
+                      ),
+                    ),
+                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                  ),
+                  Container(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'Citizenship: ',
+                      style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black),
+                    ),
+                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+                  ),
+                  Container(
+                    child: Theme(
+                      data: Theme.of(context)
+                          .copyWith(primaryColor: Colors.lightBlueAccent),
+                      child: TextField(
+                        decoration: InputDecoration(
+                            hintText: "Sri Lankan",
+                            contentPadding: EdgeInsets.all(5.0),
+                            hintStyle: TextStyle(color: Colors.grey),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                        controller: citzneTextEditorController,
+                        onChanged: (value) {
+                          citzne = value;
+                        },
+                        focusNode: citzneFocusNode,
+                      ),
+                    ),
+                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                  ),
+                  Container(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'Job: ',
+                      style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black),
+                    ),
+                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+                  ),
+                  Container(
+                    child: Theme(
+                      data: Theme.of(context)
+                          .copyWith(primaryColor: Colors.lightBlueAccent),
+                      child: TextField(
+                        decoration: InputDecoration(
+                            hintText: "Accountant",
+                            contentPadding: EdgeInsets.all(5.0),
+                            hintStyle: TextStyle(color: Colors.grey),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                        controller: jobTextEditorController,
+                        onChanged: (value) {
+                          job = value;
+                        },
+                        focusNode: jobFocusNode,
+                      ),
+                    ),
+                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                  ),
+// end addition information
                   Container(
                     child: FlatButton(
                       onPressed: () => {updateData()},

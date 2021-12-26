@@ -5,19 +5,18 @@ import 'package:cached_network_image/cached_network_image.dart';
 class SquareAvatar extends StatelessWidget {
   final String backgroundImage;
   bool isActive = false;
-
   SquareAvatar(this.backgroundImage, {this.isActive = false});
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: const BorderRadius.all(
-        Radius.circular(20.0),
+        Radius.circular(25.0),
       ),
       child: Stack(alignment: AlignmentDirectional.bottomCenter, children: [
         Container(
-            height: 40.0,
-            width: 40.0,
+            height: 50.0,
+            width: 50.0,
             child: backgroundImage == ""
                 ? new Image.asset(
                     'assets/person1.png',
