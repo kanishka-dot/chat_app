@@ -332,52 +332,32 @@ class _UserAccountState extends State<UserAccount> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Basic Information"),
-        ),
         body: Stack(
-          children: <Widget>[
-            SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    child: Center(
-                      child: Stack(
-                        children: <Widget>[
-                          (imgeFileAvatar == null)
-                              ? (photourl != "")
-                                  ? Material(
-                                      //display alreacy exsisiting profile image
-                                      child: CachedNetworkImage(
-                                        placeholder: (context, url) =>
-                                            Container(
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2.0,
-                                            valueColor:
-                                                AlwaysStoppedAnimation<Color>(
-                                                    Colors.lightBlueAccent),
-                                          ),
-                                          width: 200.0,
-                                          height: 200.0,
-                                          padding: EdgeInsets.all(20.0),
-                                        ),
-                                        imageUrl: photourl,
-                                        width: 200.0,
-                                        height: 200.0,
-                                        fit: BoxFit.cover,
+      children: <Widget>[
+        SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Container(
+                child: Center(
+                  child: Stack(
+                    children: <Widget>[
+                      (imgeFileAvatar == null)
+                          ? (photourl != "")
+                              ? Material(
+                                  //display alreacy exsisiting profile image
+                                  child: CachedNetworkImage(
+                                    placeholder: (context, url) => Container(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.0,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Colors.lightBlueAccent),
                                       ),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(125.0)),
-                                      clipBehavior: Clip.hardEdge,
-                                    )
-                                  : Icon(
-                                      Icons.account_circle,
-                                      size: 90,
-                                      color: Colors.grey,
-                                    )
-                              : Material(
-                                  child: Image.file(
-                                    imgeFileAvatar,
+                                      width: 200.0,
+                                      height: 200.0,
+                                      padding: EdgeInsets.all(20.0),
+                                    ),
+                                    imageUrl: photourl,
                                     width: 200.0,
                                     height: 200.0,
                                     fit: BoxFit.cover,
@@ -385,565 +365,574 @@ class _UserAccountState extends State<UserAccount> {
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(125.0)),
                                   clipBehavior: Clip.hardEdge,
-                                ),
-                          IconButton(
-                            onPressed: getImage,
-                            padding: EdgeInsets.all(0.0),
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.grey,
-                            iconSize: 200.0,
-                            icon: Icon(
-                              Icons.camera_alt,
-                              size: 100.0,
-                              color: Colors.white54.withOpacity(0.3),
+                                )
+                              : Icon(
+                                  Icons.account_circle,
+                                  size: 90,
+                                  color: Colors.grey,
+                                )
+                          : Material(
+                              child: Image.file(
+                                imgeFileAvatar,
+                                width: 200.0,
+                                height: 200.0,
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(125.0)),
+                              clipBehavior: Clip.hardEdge,
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                    width: double.infinity,
-                    margin: EdgeInsets.all(20.0),
-                  ),
-                  // Input fields
-                  Column(
-                    children: <Widget>[
-                      Padding(
-                          padding: EdgeInsets.all(1.0),
-                          child: isLoading
-                              ? CircularProgressIndicator()
-                              : Container()),
-                      Container(
-                        child: Text(
-                          'Profile Name: ',
-                          style: TextStyle(
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black),
+                      IconButton(
+                        onPressed: getImage,
+                        padding: EdgeInsets.all(0.0),
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.grey,
+                        iconSize: 200.0,
+                        icon: Icon(
+                          Icons.camera_alt,
+                          size: 100.0,
+                          color: Colors.white54.withOpacity(0.3),
                         ),
-                        margin:
-                            EdgeInsets.only(left: 10.0, bottom: 2.0, top: 1.0),
-                      ),
-                      Container(
-                        child: Theme(
-                          data: Theme.of(context)
-                              .copyWith(primaryColor: Colors.lightBlueAccent),
-                          child: TextField(
-                            decoration: InputDecoration(
-                                hintText: "Jhon",
-                                contentPadding: EdgeInsets.all(5.0),
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10))),
-                            controller: nameTextEditorController,
-                            onChanged: (value) {
-                              nickname = value;
-                            },
-                            focusNode: nameFocusNode,
-                          ),
-                        ),
-                        margin: EdgeInsets.only(left: 30.0, right: 30.0),
-                      ),
-                      Container(
-                        child: Text(
-                          'About Me: ',
-                          style: TextStyle(
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black),
-                        ),
-                        margin:
-                            EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
-                      ),
-                      Container(
-                        child: Theme(
-                          data: Theme.of(context)
-                              .copyWith(primaryColor: Colors.lightBlueAccent),
-                          child: TextField(
-                            decoration: InputDecoration(
-                                hintText: "I'm intrested to hike",
-                                contentPadding: EdgeInsets.all(5.0),
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10))),
-                            controller: statusTextEditorController,
-                            onChanged: (value) {
-                              status = value;
-                            },
-                            focusNode: statusFocusNode,
-                          ),
-                        ),
-                        margin: EdgeInsets.only(left: 30.0, right: 30.0),
-                      ),
-                      Container(
-                        child: Text(
-                          'Date of Birth: ',
-                          style: TextStyle(
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black),
-                        ),
-                        margin:
-                            EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
-                      ),
-                      Container(
-                        child: Theme(
-                          data: Theme.of(context)
-                              .copyWith(primaryColor: Colors.lightBlueAccent),
-                          child: DateTimeFormField(
-                            initialValue: dob,
-                            mode: DateTimeFieldPickerMode.date,
-                            onDateSelected: (DateTime value) {
-                              setState(() {
-                                dob = value;
-                              });
-                            },
-                            decoration: const InputDecoration(
-                              hintText: 'Birthday',
-                              border: OutlineInputBorder(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(10))),
-                            ),
-                          ),
-                          // child: TextField(
-                          //   keyboardType: TextInputType.number,
-                          //   decoration: InputDecoration(
-                          //     hintText: "24",
-                          //     contentPadding: EdgeInsets.all(5.0),
-                          //     hintStyle: TextStyle(color: Colors.grey),
-                          //   ),
-                          //   controller: ageTextEditorController,
-                          //   onChanged: (value) {
-                          //     age = value;
-                          //   },
-                          //   focusNode: ageFocusNode,
-                          // ),
-                        ),
-                        margin: EdgeInsets.only(left: 30.0, right: 30.0),
-                      ),
-                      Container(
-                        child: Text(
-                          'Height: ',
-                          style: TextStyle(
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black),
-                        ),
-                        margin:
-                            EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
-                      ),
-                      Container(
-                        child: Theme(
-                          data: Theme.of(context)
-                              .copyWith(primaryColor: Colors.lightBlueAccent),
-                          child: TextField(
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [heightFormater],
-                            decoration: InputDecoration(
-                                hintText: "Height",
-                                contentPadding: EdgeInsets.all(5.0),
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10))),
-                            controller: heightEditingControler,
-                            onChanged: (value) {
-                              height = value;
-                            },
-                            focusNode: heightFocusNode,
-                          ),
-                        ),
-                        margin: EdgeInsets.only(left: 30.0, right: 30.0),
-                      ),
-                      Container(
-                        child: Text(
-                          'Gender: ',
-                          style: TextStyle(
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black),
-                        ),
-                        margin:
-                            EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
-                      ),
+                      )
                     ],
-                    crossAxisAlignment: CrossAxisAlignment.start,
                   ),
-
+                ),
+                width: double.infinity,
+                margin: EdgeInsets.all(20.0),
+              ),
+              // Input fields
+              Column(
+                children: <Widget>[
+                  Padding(
+                      padding: EdgeInsets.all(1.0),
+                      child: isLoading
+                          ? CircularProgressIndicator()
+                          : Container()),
+                  Container(
+                    child: Text(
+                      'Profile Name: ',
+                      style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black),
+                    ),
+                    margin: EdgeInsets.only(left: 10.0, bottom: 2.0, top: 1.0),
+                  ),
                   Container(
                     child: Theme(
-                        data: Theme.of(context)
-                            .copyWith(primaryColor: Colors.lightBlueAccent),
-                        child: Row(
-                          children: [
-                            Text('Male',
-                                style: TextStyle(
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.black)),
-                            Radio(
-                                value: 1,
-                                groupValue: _radioSelected,
-                                activeColor: Colors.blue,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _radioSelected = value;
-                                    _radioVal = 'male';
-                                  });
-                                }),
-                            Text('Female',
-                                style: TextStyle(
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.black)),
-                            Radio(
-                                value: 2,
-                                groupValue: _radioSelected,
-                                activeColor: Colors.blue,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _radioSelected = value;
-                                    _radioVal = 'female';
-                                  });
-                                }),
-                          ],
-                        )),
+                      data: Theme.of(context)
+                          .copyWith(primaryColor: Colors.lightBlueAccent),
+                      child: TextField(
+                        decoration: InputDecoration(
+                            hintText: "Jhon",
+                            contentPadding: EdgeInsets.all(5.0),
+                            hintStyle: TextStyle(color: Colors.grey),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                        controller: nameTextEditorController,
+                        onChanged: (value) {
+                          nickname = value;
+                        },
+                        focusNode: nameFocusNode,
+                      ),
+                    ),
                     margin: EdgeInsets.only(left: 30.0, right: 30.0),
                   ),
                   Container(
                     child: Text(
-                      'Additional Information',
+                      'About Me: ',
                       style: TextStyle(
                           fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.normal,
                           color: Colors.black),
                     ),
                     margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
                   ),
+                  Container(
+                    child: Theme(
+                      data: Theme.of(context)
+                          .copyWith(primaryColor: Colors.lightBlueAccent),
+                      child: TextField(
+                        decoration: InputDecoration(
+                            hintText: "I'm intrested to hike",
+                            contentPadding: EdgeInsets.all(5.0),
+                            hintStyle: TextStyle(color: Colors.grey),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                        controller: statusTextEditorController,
+                        onChanged: (value) {
+                          status = value;
+                        },
+                        focusNode: statusFocusNode,
+                      ),
+                    ),
+                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                  ),
+                  Container(
+                    child: Text(
+                      'Date of Birth: ',
+                      style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black),
+                    ),
+                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+                  ),
+                  Container(
+                    child: Theme(
+                      data: Theme.of(context)
+                          .copyWith(primaryColor: Colors.lightBlueAccent),
+                      child: DateTimeFormField(
+                        initialValue: dob,
+                        mode: DateTimeFieldPickerMode.date,
+                        onDateSelected: (DateTime value) {
+                          setState(() {
+                            dob = value;
+                          });
+                        },
+                        decoration: const InputDecoration(
+                          hintText: 'Birthday',
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10))),
+                        ),
+                      ),
+                      // child: TextField(
+                      //   keyboardType: TextInputType.number,
+                      //   decoration: InputDecoration(
+                      //     hintText: "24",
+                      //     contentPadding: EdgeInsets.all(5.0),
+                      //     hintStyle: TextStyle(color: Colors.grey),
+                      //   ),
+                      //   controller: ageTextEditorController,
+                      //   onChanged: (value) {
+                      //     age = value;
+                      //   },
+                      //   focusNode: ageFocusNode,
+                      // ),
+                    ),
+                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                  ),
+                  Container(
+                    child: Text(
+                      'Height: ',
+                      style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black),
+                    ),
+                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+                  ),
+                  Container(
+                    child: Theme(
+                      data: Theme.of(context)
+                          .copyWith(primaryColor: Colors.lightBlueAccent),
+                      child: TextField(
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [heightFormater],
+                        decoration: InputDecoration(
+                            hintText: "Height",
+                            contentPadding: EdgeInsets.all(5.0),
+                            hintStyle: TextStyle(color: Colors.grey),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                        controller: heightEditingControler,
+                        onChanged: (value) {
+                          height = value;
+                        },
+                        focusNode: heightFocusNode,
+                      ),
+                    ),
+                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                  ),
+                  Container(
+                    child: Text(
+                      'Gender: ',
+                      style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black),
+                    ),
+                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+                  ),
+                ],
+                crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+
+              Container(
+                child: Theme(
+                    data: Theme.of(context)
+                        .copyWith(primaryColor: Colors.lightBlueAccent),
+                    child: Row(
+                      children: [
+                        Text('Male',
+                            style: TextStyle(
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black)),
+                        Radio(
+                            value: 1,
+                            groupValue: _radioSelected,
+                            activeColor: Colors.blue,
+                            onChanged: (value) {
+                              setState(() {
+                                _radioSelected = value;
+                                _radioVal = 'male';
+                              });
+                            }),
+                        Text('Female',
+                            style: TextStyle(
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black)),
+                        Radio(
+                            value: 2,
+                            groupValue: _radioSelected,
+                            activeColor: Colors.blue,
+                            onChanged: (value) {
+                              setState(() {
+                                _radioSelected = value;
+                                _radioVal = 'female';
+                              });
+                            }),
+                      ],
+                    )),
+                margin: EdgeInsets.only(left: 30.0, right: 30.0),
+              ),
+              Container(
+                child: Text(
+                  'Additional Information',
+                  style: TextStyle(
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                ),
+                margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+              ),
 
 //additional information
 
-                  Container(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      'Martial Status: ',
-                      style: TextStyle(
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black),
-                    ),
-                    margin: EdgeInsets.only(left: 10.0, bottom: 2.0, top: 1.0),
-                  ),
-                  Container(
-                    child: Theme(
-                        data: Theme.of(context)
-                            .copyWith(primaryColor: Colors.lightBlueAccent),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Radio(
-                                    value: 1,
-                                    groupValue: _MartialSelected,
-                                    activeColor: Colors.blue,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _MartialSelected = value;
-                                        _MartialradioVal = 'unmaried';
-                                      });
-                                    }),
-                                Text('Unmaried',
-                                    style: TextStyle(
-                                        fontStyle: FontStyle.normal,
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.black)),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Radio(
-                                    value: 2,
-                                    groupValue: _MartialSelected,
-                                    activeColor: Colors.blue,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _MartialSelected = value;
-                                        _MartialradioVal = 'widower';
-                                      });
-                                    }),
-                                Text('Widower',
-                                    style: TextStyle(
-                                        fontStyle: FontStyle.normal,
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.black)),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Radio(
-                                    value: 3,
-                                    groupValue: _MartialSelected,
-                                    activeColor: Colors.blue,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _MartialSelected = value;
-                                        _MartialradioVal = 'divorced';
-                                      });
-                                    }),
-                                Text('Divorced',
-                                    style: TextStyle(
-                                        fontStyle: FontStyle.normal,
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.black)),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Radio(
-                                    value: 4,
-                                    groupValue: _MartialSelected,
-                                    activeColor: Colors.blue,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _MartialSelected = value;
-                                        _MartialradioVal = 'separated';
-                                      });
-                                    }),
-                                Text('Separated',
-                                    style: TextStyle(
-                                        fontStyle: FontStyle.normal,
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.black)),
-                              ],
-                            ),
-                          ],
-                        )),
-                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
-                  ),
-                  Container(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      'No of children: ',
-                      style: TextStyle(
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black),
-                    ),
-                    margin: EdgeInsets.only(left: 10.0, bottom: 2.0, top: 1.0),
-                  ),
-                  Container(
-                    child: Theme(
-                      data: Theme.of(context)
-                          .copyWith(primaryColor: Colors.lightBlueAccent),
-                      child: TextField(
-                        keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
-                            hintText: "2",
-                            contentPadding: EdgeInsets.all(5.0),
-                            hintStyle: TextStyle(color: Colors.grey),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
-                        controller: noChildTextEditorController,
-                        onChanged: (value) {
-                          noChild = value;
-                        },
-                        focusNode: noChildFocusNode,
-                      ),
-                    ),
-                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
-                  ),
-                  Container(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      'Country Living In: ',
-                      style: TextStyle(
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black),
-                    ),
-                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
-                  ),
-                  Container(
-                    child: Theme(
-                      data: Theme.of(context)
-                          .copyWith(primaryColor: Colors.lightBlueAccent),
-                      child: TextField(
-                        decoration: InputDecoration(
-                            hintText: "Sri Lanka",
-                            contentPadding: EdgeInsets.all(5.0),
-                            hintStyle: TextStyle(color: Colors.grey),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
-                        controller: countryTextEditorController,
-                        onChanged: (value) {
-                          country = value;
-                        },
-                        focusNode: countryFocusNode,
-                      ),
-                    ),
-                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
-                  ),
-                  Container(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      'Resident State: ',
-                      style: TextStyle(
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black),
-                    ),
-                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
-                  ),
-                  Container(
-                    child: Theme(
-                      data: Theme.of(context)
-                          .copyWith(primaryColor: Colors.lightBlueAccent),
-                      child: TextField(
-                        decoration: InputDecoration(
-                            hintText: "Western",
-                            contentPadding: EdgeInsets.all(5.0),
-                            hintStyle: TextStyle(color: Colors.grey),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
-                        controller: residStatTextEditorController,
-                        onChanged: (value) {
-                          residSta = value;
-                        },
-                        focusNode: residStatFocusNode,
-                      ),
-                    ),
-                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
-                  ),
-                  Container(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      'Resident City: ',
-                      style: TextStyle(
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black),
-                    ),
-                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
-                  ),
-                  Container(
-                    child: Theme(
-                      data: Theme.of(context)
-                          .copyWith(primaryColor: Colors.lightBlueAccent),
-                      child: TextField(
-                        decoration: InputDecoration(
-                            hintText: "Colombo",
-                            contentPadding: EdgeInsets.all(5.0),
-                            hintStyle: TextStyle(color: Colors.grey),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
-                        controller: residCityTextEditorController,
-                        onChanged: (value) {
-                          residCit = value;
-                        },
-                        focusNode: residCityFocusNode,
-                      ),
-                    ),
-                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
-                  ),
-                  Container(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      'Citizenship: ',
-                      style: TextStyle(
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black),
-                    ),
-                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
-                  ),
-                  Container(
-                    child: Theme(
-                      data: Theme.of(context)
-                          .copyWith(primaryColor: Colors.lightBlueAccent),
-                      child: TextField(
-                        decoration: InputDecoration(
-                            hintText: "Sri Lankan",
-                            contentPadding: EdgeInsets.all(5.0),
-                            hintStyle: TextStyle(color: Colors.grey),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
-                        controller: citzneTextEditorController,
-                        onChanged: (value) {
-                          citzne = value;
-                        },
-                        focusNode: citzneFocusNode,
-                      ),
-                    ),
-                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
-                  ),
-                  Container(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      'Job: ',
-                      style: TextStyle(
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black),
-                    ),
-                    margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
-                  ),
-                  Container(
-                    child: Theme(
-                      data: Theme.of(context)
-                          .copyWith(primaryColor: Colors.lightBlueAccent),
-                      child: TextField(
-                        decoration: InputDecoration(
-                            hintText: "Accountant",
-                            contentPadding: EdgeInsets.all(5.0),
-                            hintStyle: TextStyle(color: Colors.grey),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
-                        controller: jobTextEditorController,
-                        onChanged: (value) {
-                          job = value;
-                        },
-                        focusNode: jobFocusNode,
-                      ),
-                    ),
-                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
-                  ),
-// end addition information
-                  Container(
-                    child: FlatButton(
-                      onPressed: () => {updateData()},
-                      child: Text(
-                        "Update",
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                      color: Colors.blueGrey,
-                      highlightColor: Colors.grey,
-                      splashColor: Colors.transparent,
-                      textColor: Colors.white,
-                      padding: EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
-                      shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(32.0))),
-                    ),
-                    margin: EdgeInsets.only(top: 30.0, bottom: 10.0),
-                  ),
-                  //logout
-                  Padding(
-                    padding: EdgeInsets.only(left: 50.0, right: 50.0),
-                    child: RaisedButton(
-                      child: Text(
-                        "Logout",
-                        style: TextStyle(color: Colors.white, fontSize: 14.0),
-                      ),
-                      onPressed: () => {service.loginOut(context)},
-                      color: Colors.red,
-                      shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(32.0))),
-                    ),
-                  )
-                ],
+              Container(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  'Martial Status: ',
+                  style: TextStyle(
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black),
+                ),
+                margin: EdgeInsets.only(left: 10.0, bottom: 2.0, top: 1.0),
               ),
-              padding: EdgeInsets.only(left: 15.0, right: 15.0),
-            )
-          ],
-        ));
+              Container(
+                child: Theme(
+                    data: Theme.of(context)
+                        .copyWith(primaryColor: Colors.lightBlueAccent),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Radio(
+                                value: 1,
+                                groupValue: _MartialSelected,
+                                activeColor: Colors.blue,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _MartialSelected = value;
+                                    _MartialradioVal = 'unmaried';
+                                  });
+                                }),
+                            Text('Unmaried',
+                                style: TextStyle(
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.black)),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Radio(
+                                value: 2,
+                                groupValue: _MartialSelected,
+                                activeColor: Colors.blue,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _MartialSelected = value;
+                                    _MartialradioVal = 'widower';
+                                  });
+                                }),
+                            Text('Widower',
+                                style: TextStyle(
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.black)),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Radio(
+                                value: 3,
+                                groupValue: _MartialSelected,
+                                activeColor: Colors.blue,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _MartialSelected = value;
+                                    _MartialradioVal = 'divorced';
+                                  });
+                                }),
+                            Text('Divorced',
+                                style: TextStyle(
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.black)),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Radio(
+                                value: 4,
+                                groupValue: _MartialSelected,
+                                activeColor: Colors.blue,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _MartialSelected = value;
+                                    _MartialradioVal = 'separated';
+                                  });
+                                }),
+                            Text('Separated',
+                                style: TextStyle(
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.black)),
+                          ],
+                        ),
+                      ],
+                    )),
+                margin: EdgeInsets.only(left: 30.0, right: 30.0),
+              ),
+              Container(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  'No of children: ',
+                  style: TextStyle(
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black),
+                ),
+                margin: EdgeInsets.only(left: 10.0, bottom: 2.0, top: 1.0),
+              ),
+              Container(
+                child: Theme(
+                  data: Theme.of(context)
+                      .copyWith(primaryColor: Colors.lightBlueAccent),
+                  child: TextField(
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                        hintText: "2",
+                        contentPadding: EdgeInsets.all(5.0),
+                        hintStyle: TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                    controller: noChildTextEditorController,
+                    onChanged: (value) {
+                      noChild = value;
+                    },
+                    focusNode: noChildFocusNode,
+                  ),
+                ),
+                margin: EdgeInsets.only(left: 30.0, right: 30.0),
+              ),
+              Container(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  'Country Living In: ',
+                  style: TextStyle(
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black),
+                ),
+                margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+              ),
+              Container(
+                child: Theme(
+                  data: Theme.of(context)
+                      .copyWith(primaryColor: Colors.lightBlueAccent),
+                  child: TextField(
+                    decoration: InputDecoration(
+                        hintText: "Sri Lanka",
+                        contentPadding: EdgeInsets.all(5.0),
+                        hintStyle: TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                    controller: countryTextEditorController,
+                    onChanged: (value) {
+                      country = value;
+                    },
+                    focusNode: countryFocusNode,
+                  ),
+                ),
+                margin: EdgeInsets.only(left: 30.0, right: 30.0),
+              ),
+              Container(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  'Resident State: ',
+                  style: TextStyle(
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black),
+                ),
+                margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+              ),
+              Container(
+                child: Theme(
+                  data: Theme.of(context)
+                      .copyWith(primaryColor: Colors.lightBlueAccent),
+                  child: TextField(
+                    decoration: InputDecoration(
+                        hintText: "Western",
+                        contentPadding: EdgeInsets.all(5.0),
+                        hintStyle: TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                    controller: residStatTextEditorController,
+                    onChanged: (value) {
+                      residSta = value;
+                    },
+                    focusNode: residStatFocusNode,
+                  ),
+                ),
+                margin: EdgeInsets.only(left: 30.0, right: 30.0),
+              ),
+              Container(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  'Resident City: ',
+                  style: TextStyle(
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black),
+                ),
+                margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+              ),
+              Container(
+                child: Theme(
+                  data: Theme.of(context)
+                      .copyWith(primaryColor: Colors.lightBlueAccent),
+                  child: TextField(
+                    decoration: InputDecoration(
+                        hintText: "Colombo",
+                        contentPadding: EdgeInsets.all(5.0),
+                        hintStyle: TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                    controller: residCityTextEditorController,
+                    onChanged: (value) {
+                      residCit = value;
+                    },
+                    focusNode: residCityFocusNode,
+                  ),
+                ),
+                margin: EdgeInsets.only(left: 30.0, right: 30.0),
+              ),
+              Container(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  'Citizenship: ',
+                  style: TextStyle(
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black),
+                ),
+                margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+              ),
+              Container(
+                child: Theme(
+                  data: Theme.of(context)
+                      .copyWith(primaryColor: Colors.lightBlueAccent),
+                  child: TextField(
+                    decoration: InputDecoration(
+                        hintText: "Sri Lankan",
+                        contentPadding: EdgeInsets.all(5.0),
+                        hintStyle: TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                    controller: citzneTextEditorController,
+                    onChanged: (value) {
+                      citzne = value;
+                    },
+                    focusNode: citzneFocusNode,
+                  ),
+                ),
+                margin: EdgeInsets.only(left: 30.0, right: 30.0),
+              ),
+              Container(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  'Job: ',
+                  style: TextStyle(
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black),
+                ),
+                margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
+              ),
+              Container(
+                child: Theme(
+                  data: Theme.of(context)
+                      .copyWith(primaryColor: Colors.lightBlueAccent),
+                  child: TextField(
+                    decoration: InputDecoration(
+                        hintText: "Accountant",
+                        contentPadding: EdgeInsets.all(5.0),
+                        hintStyle: TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                    controller: jobTextEditorController,
+                    onChanged: (value) {
+                      job = value;
+                    },
+                    focusNode: jobFocusNode,
+                  ),
+                ),
+                margin: EdgeInsets.only(left: 30.0, right: 30.0),
+              ),
+// end addition information
+              Container(
+                child: FlatButton(
+                  onPressed: () => {updateData()},
+                  child: Text(
+                    "Update",
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                  color: Colors.blueGrey,
+                  highlightColor: Colors.grey,
+                  splashColor: Colors.transparent,
+                  textColor: Colors.white,
+                  padding: EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(32.0))),
+                ),
+                margin: EdgeInsets.only(top: 30.0, bottom: 10.0),
+              ),
+              //logout
+              Padding(
+                padding: EdgeInsets.only(left: 50.0, right: 50.0),
+                child: RaisedButton(
+                  child: Text(
+                    "Logout",
+                    style: TextStyle(color: Colors.white, fontSize: 14.0),
+                  ),
+                  onPressed: () => {service.loginOut(context)},
+                  color: Colors.red,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(32.0))),
+                ),
+              )
+            ],
+          ),
+          padding: EdgeInsets.only(left: 15.0, right: 15.0),
+        )
+      ],
+    ));
   }
 }

@@ -52,7 +52,8 @@ class FriendsState extends State<FriendsPage> {
             shrinkWrap: true,
             padding: const EdgeInsets.all(0.0),
             itemBuilder: (context, i) {
-              return _buildRow(_listFriends[i]);
+              return Column(
+                  children: <Widget>[_buildRow(_listFriends[i]), Divider()]);
             });
       }
     }
@@ -73,25 +74,42 @@ class FriendsState extends State<FriendsPage> {
         style: _biggerFont,
       ),
       subtitle: Text(
-        "Age:" + friendsModel.age + "\n City:" + friendsModel.city,
+        "Age:" +
+            friendsModel.age +
+            "\nCity:" +
+            friendsModel.city +
+            "\nHeight:" +
+            friendsModel.height +
+            " ft",
       ),
-      trailing: ElevatedButton(
-        onPressed: friendsModel.isPending
-            ? null
-            : () => {sendRequest(friendsModel.userid)},
-        child: friendsModel.isPending
-            ? const Text(
-                'Pending',
-                style: TextStyle(color: Colors.white, fontSize: 12),
-              )
-            : const Text(
+      trailing: isReg
+          ? ElevatedButton(
+              onPressed: friendsModel.isPending
+                  ? null
+                  : () => {sendRequest(friendsModel.userid)},
+              child: friendsModel.isPending
+                  ? const Text(
+                      'Pending',
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    )
+                  : const Text(
+                      'Send Request',
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+              style: ElevatedButton.styleFrom(
+                primary: sendrequestbutton, // backgr/ound
+              ),
+            )
+          : ElevatedButton(
+              onPressed: null,
+              child: const Text(
                 'Send Request',
                 style: TextStyle(color: Colors.white, fontSize: 12),
               ),
-        style: ElevatedButton.styleFrom(
-          primary: sendrequestbutton, // backgr/ound
-        ),
-      ),
+              style: ElevatedButton.styleFrom(
+                primary: sendrequestbutton, // backgr/ound
+              ),
+            ),
       onTap: () {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => ProfileCard(friendsModel)));

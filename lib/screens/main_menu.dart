@@ -31,8 +31,8 @@ class MainMenuState extends State<MainMenu> {
         isReg: isReg,
       ),
       FriendsRequest(),
-      // UserAccount(),
-      UserAccountOptions()
+      UserAccount(),
+      // UserAccountOptions()
     ];
   }
 

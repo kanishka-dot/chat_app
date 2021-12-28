@@ -11,12 +11,12 @@ class SquareAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: const BorderRadius.all(
-        Radius.circular(25.0),
+        Radius.circular(30.0),
       ),
       child: Stack(alignment: AlignmentDirectional.bottomCenter, children: [
         Container(
-            height: 50.0,
-            width: 50.0,
+            height: 60.0,
+            width: 60.0,
             child: backgroundImage == ""
                 ? new Image.asset(
                     'assets/person1.png',

@@ -11,7 +11,6 @@ class UserAccountOptions extends StatefulWidget {
 class _UserAccountState extends State<UserAccountOptions> {
   List<String> title = [
     "Basic Information",
-    "Additional Information",
   ];
 
   @override
