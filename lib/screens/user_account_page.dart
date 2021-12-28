@@ -75,13 +75,14 @@ class _UserAccountState extends State<UserAccount> {
     // setState(() {
     //   dob = DateTime.now();
     // });
+    //dob = DateTime.now();
   }
 
   void readDataFromLocal() async {
     try {
       preferences = await SharedPreferences.getInstance();
       id = preferences.getString('id');
-      Timestamp timestamp;
+      int timestamp;
       String token = await service.getToken();
 
       if (id == null) {
@@ -104,9 +105,11 @@ class _UserAccountState extends State<UserAccount> {
               ? documentSnapshot.get('height')
               : '';
           // ts = documentSnapshot.get('dob');
-          // timestamp = documentSnapshot.data().toString().contains('dob')
-          //     ? documentSnapshot.get('dob')
-          //     : '';
+          Timestamp ts = documentSnapshot.data().toString().contains('dob')
+              ? documentSnapshot.get('dob')
+              : DateTime.now();
+
+          timestamp = ts.microsecondsSinceEpoch;
 
           _radioVal = documentSnapshot.data().toString().contains('gender')
               ? documentSnapshot.get('gender')
@@ -146,8 +149,7 @@ class _UserAccountState extends State<UserAccount> {
         photourl = preferences.containsKey('dpurl')
             ? preferences.getString('dpurl')
             : '';
-        timestamp =
-            preferences.containsKey('dob') ? preferences.get('dob') : '';
+        timestamp = preferences.containsKey('dob') ? preferences.get('dob') : 0;
         _radioVal =
             preferences.containsKey('gender') ? preferences.get('gender') : '';
         height =
@@ -191,8 +193,9 @@ class _UserAccountState extends State<UserAccount> {
         } else if (_MartialradioVal == "separated") {
           _MartialSelected = 4;
         }
-        DateTime dattime = timestamp.toDate();
-        dob = dattime;
+        var date = new DateTime.fromMicrosecondsSinceEpoch(timestamp);
+        dob = date;
+
         nameTextEditorController = TextEditingController(text: nickname);
         statusTextEditorController = TextEditingController(text: status);
         heightEditingControler = TextEditingController(text: height);
@@ -482,37 +485,60 @@ class _UserAccountState extends State<UserAccount> {
                     child: Theme(
                       data: Theme.of(context)
                           .copyWith(primaryColor: Colors.lightBlueAccent),
-                      child: DateTimeFormField(
-                        initialValue: dob,
-                        mode: DateTimeFieldPickerMode.date,
-                        onDateSelected: (DateTime value) {
-                          setState(() {
-                            dob = value;
-                          });
-                        },
-                        decoration: const InputDecoration(
-                          hintText: 'Birthday',
-                          border: OutlineInputBorder(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(10))),
-                        ),
-                      ),
-                      // child: TextField(
-                      //   keyboardType: TextInputType.number,
-                      //   decoration: InputDecoration(
-                      //     hintText: "24",
-                      //     contentPadding: EdgeInsets.all(5.0),
-                      //     hintStyle: TextStyle(color: Colors.grey),
-                      //   ),
-                      //   controller: ageTextEditorController,
-                      //   onChanged: (value) {
-                      //     age = value;
-                      //   },
-                      //   focusNode: ageFocusNode,
-                      // ),
+                      child: DateTimeField(
+                          decoration: const InputDecoration(
+                              contentPadding: EdgeInsets.all(5.0),
+                              hintStyle: TextStyle(color: Colors.grey),
+                              border: OutlineInputBorder(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10)))),
+                          mode: DateTimeFieldPickerMode.date,
+                          selectedDate: dob,
+                          onDateSelected: (DateTime value) {
+                            setState(() {
+                              dob = value;
+                            });
+                          }),
                     ),
                     margin: EdgeInsets.only(left: 30.0, right: 30.0),
                   ),
+
+                  // Container(
+                  //   child: Theme(
+                  //     data: Theme.of(context)
+                  //         .copyWith(primaryColor: Colors.lightBlueAccent),
+                  //     child: DateTimeFormField(
+                  //       initialValue: dob,
+                  //       initialDate: dob,
+                  //       mode: DateTimeFieldPickerMode.date,
+                  //       onDateSelected: (DateTime value) {
+                  //         setState(() {
+                  //           dob = value;
+                  //         });
+                  //       },
+                  //       decoration: const InputDecoration(
+                  //         hintText: 'Birthday',
+                  //         border: OutlineInputBorder(
+                  //             borderRadius:
+                  //                 const BorderRadius.all(Radius.circular(10))),
+                  //       ),
+                  //     ),
+                  //     // child: TextField(
+                  //     //   keyboardType: TextInputType.number,
+                  //     //   decoration: InputDecoration(
+                  //     //     hintText: "24",
+                  //     //     contentPadding: EdgeInsets.all(5.0),
+                  //     //     hintStyle: TextStyle(color: Colors.grey),
+                  //     //   ),
+                  //     //   controller: ageTextEditorController,
+                  //     //   onChanged: (value) {
+                  //     //     age = value;
+                  //     //   },
+                  //     //   focusNode: ageFocusNode,
+                  //     // ),
+                  //   ),
+                  //   margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                  // ),
                   Container(
                     child: Text(
                       'Height: ',

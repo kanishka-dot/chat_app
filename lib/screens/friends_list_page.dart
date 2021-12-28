@@ -131,8 +131,8 @@ class FriendsState extends State<FriendsPage> {
             List<String> sentFriend = <String>[];
             if (querySnapshot.size > 0) {
               querySnapshot.docs.forEach((values) {
-                var userid = values["userid"];
-                if (values["status"] == 'sent') {
+                var userid = values.data()["userid"];
+                if (values.data()["status"] == 'sent') {
                   print(userid);
                   sentFriend.add(userid);
                 } else {
