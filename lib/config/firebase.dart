@@ -164,7 +164,7 @@ class Service {
           },
           verificationFailed: (FirebaseAuthException exception) {
             Fluttertoast.showToast(
-                msg: "Invalid OTP Code", gravity: ToastGravity.CENTER);
+                msg: exception.toString(), gravity: ToastGravity.CENTER);
             EasyLoading.dismiss();
           },
           codeSent: (String verificationId, [int forceResendingToken]) {
