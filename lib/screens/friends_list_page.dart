@@ -76,11 +76,11 @@ class FriendsState extends State<FriendsPage> {
       subtitle: Text(
         "Age:" +
             friendsModel.age +
-            "\nCity:" +
-            friendsModel.city +
             "\nHeight:" +
             friendsModel.height +
-            " ft",
+            " ft"
+                "\nCity:" +
+            friendsModel.city,
       ),
       trailing: isReg
           ? ElevatedButton(

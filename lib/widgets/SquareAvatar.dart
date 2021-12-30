@@ -15,8 +15,8 @@ class SquareAvatar extends StatelessWidget {
       ),
       child: Stack(alignment: AlignmentDirectional.bottomCenter, children: [
         Container(
-            height: 60.0,
-            width: 60.0,
+            height: 50.0,
+            width: 50.0,
             child: backgroundImage == ""
                 ? new Image.asset(
                     'assets/person1.png',

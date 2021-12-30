@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_app/config/firebase.dart';
+import 'package:chat_app/widgets/TimeStampToDate.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -30,6 +31,7 @@ class _MessageState extends State<Message> {
   File imageFile;
   String imageUrl;
   bool isLoading = false;
+  // AudioCache _audioCache;
 
   String chatId;
   SharedPreferences preferances;
@@ -40,6 +42,10 @@ class _MessageState extends State<Message> {
   void initState() {
     super.initState();
     chatId = "";
+    // _audioCache = AudioCache(
+    //   prefix: 'assets/',
+    //   fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP),
+    // );
 
     readLocal();
   }
@@ -151,10 +157,14 @@ class _MessageState extends State<Message> {
                                   borderRadius: BorderRadius.circular(12)),
                               padding: EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 10),
-                              child: Text(
-                                x['message'],
-                              ),
-                            )
+                              child: Column(
+                                children: [
+                                  Text(
+                                    x['message'],
+                                  ),
+                                  TimeStampToDate(x['time']),
+                                ],
+                              ))
                           : Container(
                               child: TextButton(
                                 child: Material(
@@ -218,7 +228,7 @@ class _MessageState extends State<Message> {
                 physics: ScrollPhysics(),
                 reverse: false,
                 child: Container(
-                  height: MediaQuery.of(context).size.height - 150,
+                  height: MediaQuery.of(context).size.height - 190,
                   child: createListMessage(),
                 ),
               ),
@@ -282,6 +292,7 @@ class _MessageState extends State<Message> {
                     ),
                   ),
                   onTap: () => {
+                    // _audioCache.play('tap.mp3'),
                     if (messageTextControler.text.trim().isNotEmpty)
                       {onSendMessage(messageTextControler.text, 1)},
                     if (messageTextControler.text.isNotEmpty)

@@ -60,6 +60,7 @@ class _UserAccountState extends State<UserAccount> {
   int _MartialSelected;
   File imgeFileAvatar;
   bool isLoading = false;
+  bool _childstate = false;
 
   var heightFormater =
       new MaskTextInputFormatter(mask: '#.##', filter: {"#": RegExp(r'[0-9]')});
@@ -186,12 +187,17 @@ class _UserAccountState extends State<UserAccount> {
 
         if (_MartialradioVal == "unmaried") {
           _MartialSelected = 1;
+          _childstate = false;
+          noChild = "";
         } else if (_MartialradioVal == "widower") {
           _MartialSelected = 2;
+          _childstate = true;
         } else if (_MartialradioVal == "divorced") {
           _MartialSelected = 3;
+          _childstate = true;
         } else if (_MartialradioVal == "separated") {
           _MartialSelected = 4;
+          _childstate = true;
         }
         var date = new DateTime.fromMicrosecondsSinceEpoch(timestamp);
         dob = date;
@@ -629,6 +635,7 @@ class _UserAccountState extends State<UserAccount> {
                 child: Text(
                   'Additional Information',
                   style: TextStyle(
+                      fontSize: 18,
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.bold,
                       color: Colors.black),
@@ -665,6 +672,10 @@ class _UserAccountState extends State<UserAccount> {
                                   setState(() {
                                     _MartialSelected = value;
                                     _MartialradioVal = 'unmaried';
+                                    _childstate = false;
+                                    noChild = "";
+                                    noChildTextEditorController =
+                                        TextEditingController(text: noChild);
                                   });
                                 }),
                             Text('Unmaried',
@@ -684,6 +695,7 @@ class _UserAccountState extends State<UserAccount> {
                                   setState(() {
                                     _MartialSelected = value;
                                     _MartialradioVal = 'widower';
+                                    _childstate = true;
                                   });
                                 }),
                             Text('Widower',
@@ -703,6 +715,7 @@ class _UserAccountState extends State<UserAccount> {
                                   setState(() {
                                     _MartialSelected = value;
                                     _MartialradioVal = 'divorced';
+                                    _childstate = true;
                                   });
                                 }),
                             Text('Divorced',
@@ -722,6 +735,7 @@ class _UserAccountState extends State<UserAccount> {
                                   setState(() {
                                     _MartialSelected = value;
                                     _MartialradioVal = 'separated';
+                                    _childstate = true;
                                   });
                                 }),
                             Text('Separated',
@@ -751,6 +765,7 @@ class _UserAccountState extends State<UserAccount> {
                   data: Theme.of(context)
                       .copyWith(primaryColor: Colors.lightBlueAccent),
                   child: TextField(
+                    enabled: _childstate,
                     keyboardType: TextInputType.phone,
                     decoration: InputDecoration(
                         hintText: "2",
