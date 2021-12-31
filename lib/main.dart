@@ -49,6 +49,7 @@ class _MyApp extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: new ThemeData(
           primarySwatch: Colors.blueGrey,
         ),

@@ -31,10 +31,12 @@ class Conversation extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                receiverName,
-                style: TextStyle(fontSize: 16),
-              ),
+              InkWell(
+                child: Text(
+                  receiverName,
+                  style: TextStyle(fontSize: 16),
+                ),
+              )
               // Text(
               //   "Active 2m ago",
               //   style: TextStyle(fontSize: 12),

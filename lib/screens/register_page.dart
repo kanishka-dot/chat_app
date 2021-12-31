@@ -17,7 +17,7 @@ class _Register extends State<Register> {
   TextEditingController mobileEditingControler = TextEditingController();
   TextEditingController heightEditingControler = TextEditingController();
   String _radioVal = "";
-  static final validateName = RegExp(r'^[a-zA-Z0-9]+$', caseSensitive: false);
+  static final validateName = RegExp(r'^[a-zA-Z0-9\s]+$', caseSensitive: false);
   static final validateEmail = RegExp(
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
   DateTime selectedDate;
@@ -69,16 +69,19 @@ class _Register extends State<Register> {
                   image: DecorationImage(
                 colorFilter: new ColorFilter.mode(
                     Colors.black.withOpacity(0.3), BlendMode.dstATop),
-                image: AssetImage("assets/slide4.jpg"),
+                image: AssetImage("assets/slide1.jpg"),
                 fit: BoxFit.cover,
               )),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Text(
-                  //   'Find Your Soul Mate',
-                  //   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                  // ),
+                  Text(
+                    'Love Me',
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 42,
+                        fontWeight: FontWeight.bold),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(
                         top: 12.0, left: 12.0, right: 12.0),

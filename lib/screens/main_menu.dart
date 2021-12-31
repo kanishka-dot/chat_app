@@ -60,7 +60,7 @@ class MainMenuState extends State<MainMenu> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("Chat App"),
+        title: new Text("Love Me"),
       ),
       body: screens[currentindex],
       bottomNavigationBar: BottomNavigationBar(

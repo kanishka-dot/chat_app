@@ -813,37 +813,7 @@ class _UserAccountState extends State<UserAccount> {
                 ),
                 margin: EdgeInsets.only(left: 30.0, right: 30.0),
               ),
-              Container(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  'Resident State: ',
-                  style: TextStyle(
-                      fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.black),
-                ),
-                margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
-              ),
-              Container(
-                child: Theme(
-                  data: Theme.of(context)
-                      .copyWith(primaryColor: Colors.lightBlueAccent),
-                  child: TextField(
-                    decoration: InputDecoration(
-                        hintText: "Western",
-                        contentPadding: EdgeInsets.all(5.0),
-                        hintStyle: TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                    controller: residStatTextEditorController,
-                    onChanged: (value) {
-                      residSta = value;
-                    },
-                    focusNode: residStatFocusNode,
-                  ),
-                ),
-                margin: EdgeInsets.only(left: 30.0, right: 30.0),
-              ),
+
               Container(
                 alignment: Alignment.topLeft,
                 child: Text(
@@ -875,37 +845,7 @@ class _UserAccountState extends State<UserAccount> {
                 ),
                 margin: EdgeInsets.only(left: 30.0, right: 30.0),
               ),
-              Container(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  'Citizenship: ',
-                  style: TextStyle(
-                      fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.black),
-                ),
-                margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
-              ),
-              Container(
-                child: Theme(
-                  data: Theme.of(context)
-                      .copyWith(primaryColor: Colors.lightBlueAccent),
-                  child: TextField(
-                    decoration: InputDecoration(
-                        hintText: "Sri Lankan",
-                        contentPadding: EdgeInsets.all(5.0),
-                        hintStyle: TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                    controller: citzneTextEditorController,
-                    onChanged: (value) {
-                      citzne = value;
-                    },
-                    focusNode: citzneFocusNode,
-                  ),
-                ),
-                margin: EdgeInsets.only(left: 30.0, right: 30.0),
-              ),
+
               Container(
                 alignment: Alignment.topLeft,
                 child: Text(

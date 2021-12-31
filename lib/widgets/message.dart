@@ -228,7 +228,7 @@ class _MessageState extends State<Message> {
                 physics: ScrollPhysics(),
                 reverse: false,
                 child: Container(
-                  height: MediaQuery.of(context).size.height - 190,
+                  height: MediaQuery.of(context).size.height - 150,
                   child: createListMessage(),
                 ),
               ),

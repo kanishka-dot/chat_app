@@ -10,17 +10,6 @@ class IntroSliderPage extends StatelessWidget {
     return [
       PageViewModel(
           image: Image.asset(
-            "assets/slide1.jpg",
-            scale: 8,
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.cover,
-          ),
-          decoration: PageDecoration(imageFlex: 5),
-          title: "Hello love Seekers",
-          body: "This is yours personal app"),
-      PageViewModel(
-          image: Image.asset(
             "assets/slide2.jpg",
             scale: 8,
             width: double.infinity,
@@ -29,18 +18,7 @@ class IntroSliderPage extends StatelessWidget {
           ),
           decoration: PageDecoration(imageFlex: 5),
           title: "Hello love Seekers",
-          body: "This is yours personal app"),
-      PageViewModel(
-          image: Image.asset(
-            "assets/slide3.jpg",
-            scale: 8,
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.cover,
-          ),
-          decoration: PageDecoration(imageFlex: 5),
-          title: "Hello love Seekers",
-          body: "This is yours personal app"),
+          body: "This is your personal app, Find your soul mate"),
       PageViewModel(
           image: Image.asset(
             "assets/slide4.jpg",
@@ -50,8 +28,8 @@ class IntroSliderPage extends StatelessWidget {
             fit: BoxFit.cover,
           ),
           decoration: PageDecoration(imageFlex: 5),
-          title: "Hello love Seekers",
-          body: "This is yours personal app")
+          title: "Your Dream Love",
+          body: "Find your best match to make love"),
     ];
   }
 
