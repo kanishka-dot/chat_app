@@ -19,18 +19,18 @@ class MainMenuState extends State<MainMenu> {
   var loginUser;
   // SharedPreferences preferences;
   String photoUrl = "";
-  int currentindex = 1;
+  int currentindex = 0;
   bool isReg;
   List<dynamic> screens = [];
   // List<String> _listFriend;
   MainMenuState({@required this.isReg}) {
     screens = [
-      Messages(),
-
       FriendsPage(
         isReg: isReg,
       ),
+      Messages(),
       FriendsRequest(),
+      UserAccount(),
       UserAccount(),
       // UserAccountOptions()
     ];
@@ -41,9 +41,9 @@ class MainMenuState extends State<MainMenu> {
     super.initState();
     loginUser = FirebaseAuth.instance.currentUser;
     if (isReg) {
-      currentindex = 1;
+      currentindex = 0;
     } else {
-      currentindex = 1;
+      currentindex = 0;
     }
     // getProfileImage();
   }
@@ -78,13 +78,13 @@ class MainMenuState extends State<MainMenu> {
         items: [
           BottomNavigationBarItem(
             backgroundColor: bottomNavColor,
-            icon: Icon(Icons.message),
-            label: 'Messages',
+            icon: Icon(Icons.people_alt),
+            label: 'Find Partner',
           ),
           BottomNavigationBarItem(
             backgroundColor: bottomNavColor,
-            icon: Icon(Icons.people_alt),
-            label: 'Find Friends',
+            icon: Icon(Icons.message),
+            label: 'Messages',
           ),
           BottomNavigationBarItem(
             backgroundColor: bottomNavColor,
@@ -95,6 +95,11 @@ class MainMenuState extends State<MainMenu> {
             backgroundColor: bottomNavColor,
             icon: Icon(Icons.person),
             label: 'Account',
+          ),
+          BottomNavigationBarItem(
+            backgroundColor: bottomNavColor,
+            icon: Icon(Icons.group),
+            label: 'Partner List',
           ),
         ],
       ),
