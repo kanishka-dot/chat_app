@@ -1,3 +1,4 @@
+import 'package:chat_app/config/firebase.dart';
 import 'package:chat_app/screens/profile_card.dart';
 import 'package:chat_app/widgets/SquareAvatar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,6 +16,7 @@ class FriendsPage extends StatefulWidget {
 }
 
 class FriendsState extends State<FriendsPage> {
+  Service service = Service();
   bool _isProgressBarShown = true;
   final _biggerFont = const TextStyle(fontSize: 15.0);
   List<FriendsModel> _listFriends;
@@ -43,7 +45,7 @@ class FriendsState extends State<FriendsPage> {
               child: new CircularProgressIndicator()));
     } else {
       if (_listFriends.length == 0 || _listFriends == null) {
-        widget = new Center(child: new Text('Lets wait for some friends'));
+        widget = new Center(child: new Text('Lets wait for some Partners'));
       } else {
         widget = new ListView.builder(
             physics:
@@ -120,6 +122,7 @@ class FriendsState extends State<FriendsPage> {
   Future _getFriendList() async {
     try {
       var userid = FirebaseAuth.instance.currentUser.uid;
+      String gender = await service.getGender(userid);
       FirebaseFirestore.instance
           .collection('friends')
           .doc(userid)
@@ -148,6 +151,7 @@ class FriendsState extends State<FriendsPage> {
                     whereNotIn: (listFriend == null || listFriend.length == 0
                         ? newUser
                         : listFriend)) //if new user
+                .where('gender', isEqualTo: gender)
                 .snapshots()
                 .forEach((querySnapshot) {
               List<FriendsModel> listFriends = <FriendsModel>[];
@@ -258,21 +262,29 @@ class FriendsState extends State<FriendsPage> {
 
   sendRequest(String reciveruid) async {
     try {
-      String name;
-      String age;
-      String gender;
+      String martial;
+      String country;
+      String city;
+      String job;
       var userid = FirebaseAuth.instance.currentUser.uid;
+
       await userStore
           .collection("users")
           .doc(userid)
           .get()
           .then((DocumentSnapshot documentSnapshot) {
-        name = documentSnapshot.get('username');
-        age = documentSnapshot.get('age');
-        gender = documentSnapshot.get('gender');
+        martial = documentSnapshot.get('martial');
+        country = documentSnapshot.get('country');
+        city = documentSnapshot.get('residcity');
+        job = documentSnapshot.get('job');
       });
-      if (name.isEmpty || gender.isEmpty) {
-        throw ("Please update profile to find friends");
+      if (martial.isEmpty || country.isEmpty || city.isEmpty || job.isEmpty) {
+        int reqcount = await service.getReqCountParameter();
+        int currentreqcount = await service.getCurrentUserRequest(userid);
+
+        if (currentreqcount >= reqcount) {
+          throw ("Please update addition information to experiance more");
+        }
       }
 
       userStore
@@ -283,6 +295,7 @@ class FriendsState extends State<FriendsPage> {
           .set({
         'userid': userid,
         'status': 'pending',
+        'request': 'receive',
         'create_date': DateTime.now()
       });
       userStore
@@ -293,8 +306,14 @@ class FriendsState extends State<FriendsPage> {
           .set({
         'userid': reciveruid,
         'status': 'sent',
+        'request': 'send',
         'create_date': DateTime.now()
       });
+
+      userStore.collection("users").doc(userid).update({
+        'request_count': FieldValue.increment(1),
+      });
+
       Fluttertoast.showToast(msg: "Friend Request Sent");
     } catch (e) {
       Fluttertoast.showToast(msg: e);

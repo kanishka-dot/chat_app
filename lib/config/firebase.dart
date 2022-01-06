@@ -26,6 +26,65 @@ class Service {
     prefs.setInt(id, value);
   }
 
+  Future<int> getReqCountParameter() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int reqcount = prefs.getInt('reqcount');
+
+      if (reqcount == null) {
+        var userData = await FirebaseFirestore.instance
+            .collection("parameters")
+            .doc("users")
+            .get();
+
+        reqcount = userData.get('request_count');
+        prefs.setInt('reqcount', reqcount);
+      }
+
+      return reqcount;
+    } catch (error) {
+      return 0;
+    }
+  }
+
+  Future<int> getCurrentUserRequest(String userid) async {
+    try {
+      int reqcount;
+
+      var userData = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(userid)
+          .get();
+
+      reqcount = userData.get('request_count');
+
+      return reqcount;
+    } catch (error) {
+      return 0;
+    }
+  }
+
+  Future<String> getGender(String userid) async {
+    try {
+      String gender;
+
+      var userData = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(userid)
+          .get();
+
+      gender = userData.get('gender');
+
+      if (gender == 'male') {
+        return 'female';
+      } else {
+        return 'male';
+      }
+    } catch (error) {
+      return 'female';
+    }
+  }
+
   Future<void> saveUserDetails(userid) async {
     await FirebaseFirestore.instance
         .collection('users')

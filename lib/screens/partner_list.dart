@@ -1,66 +1,29 @@
-import 'package:chat_app/config/firebase.dart';
+import 'dart:collection';
+
 import 'package:chat_app/screens/conversation_page.dart';
 import 'package:chat_app/widgets/SquareAvatar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class Messages extends StatefulWidget {
+class PartnerList extends StatefulWidget {
+  // const PartnerList({ Key? key }) : super(key: key);
+
   @override
-  _MessagesState createState() => new _MessagesState();
+  _PartnerListState createState() => _PartnerListState();
 }
 
-class _MessagesState extends State<Messages> {
-  TextEditingController messageTextControler = TextEditingController();
-
-  Service service = Service();
-  final auth = FirebaseAuth.instance;
-  final messageStore = FirebaseFirestore.instance;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  reverse: false,
-                  child: Container(
-                    height: MediaQuery.of(context).size.height - 150,
-                    child: ShowMessage(),
-                  )),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class ShowMessage extends StatefulWidget {
-  @override
-  _ShowMessage createState() => new _ShowMessage();
-}
-
-class _ShowMessage extends State<ShowMessage> {
+class _PartnerListState extends State<PartnerList> {
   List<String> _listFriends = <String>[""];
+  Map<String, String> partnerRequestWay = Map();
   bool isLoading = true;
-  @override
+  var loginUser = FirebaseAuth.instance.currentUser.uid;
+
   void initState() {
     super.initState();
     getFriendsList();
   }
 
-  var loginUser = FirebaseAuth.instance.currentUser.uid;
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -104,6 +67,8 @@ class _ShowMessage extends State<ShowMessage> {
                       title: Text(
                         x['username'],
                       ),
+                      subtitle:
+                          Text("Request:" + partnerRequestWay[x['userid']]),
                       onTap: () => {
                         Navigator.push(
                             context,
@@ -131,6 +96,7 @@ class _ShowMessage extends State<ShowMessage> {
       if (element.size > 0) {
         element.docs.forEach((users) {
           print(users["userid"]);
+          partnerRequestWay[users["userid"]] = users["request"];
           listFriends.add(users["userid"]);
         });
       }

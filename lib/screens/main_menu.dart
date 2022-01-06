@@ -1,6 +1,8 @@
+import 'package:chat_app/config/firebase.dart';
 import 'package:chat_app/screens/friend_request_page.dart';
 import 'package:chat_app/screens/friends_list_page.dart';
 import 'package:chat_app/screens/message_page.dart';
+import 'package:chat_app/screens/partner_list.dart';
 import 'package:chat_app/screens/user_account.dart';
 import 'package:chat_app/screens/user_account_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +18,9 @@ class MainMenu extends StatefulWidget {
 }
 
 class MainMenuState extends State<MainMenu> {
+  Service service = Service();
   var loginUser;
+
   // SharedPreferences preferences;
   String photoUrl = "";
   int currentindex = 0;
@@ -30,8 +34,8 @@ class MainMenuState extends State<MainMenu> {
       ),
       Messages(),
       FriendsRequest(),
-      UserAccount(),
-      UserAccount(),
+      PartnerList(),
+
       // UserAccountOptions()
     ];
   }
@@ -61,6 +65,42 @@ class MainMenuState extends State<MainMenu> {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text("Love Me"),
+        actions: [
+          PopupMenuButton<int>(
+              onSelected: (item) => onSelected(context, item),
+              itemBuilder: (context) => [
+                    PopupMenuItem(
+                        value: 1,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.person,
+                              color: Colors.black,
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Text('Account')
+                          ],
+                        )),
+                    PopupMenuDivider(),
+                    PopupMenuItem(
+                        textStyle: TextStyle(color: Colors.red),
+                        value: 0,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.logout,
+                              color: Colors.red,
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Text('Log Out')
+                          ],
+                        ))
+                  ])
+        ],
       ),
       body: screens[currentindex],
       bottomNavigationBar: BottomNavigationBar(
@@ -93,16 +133,53 @@ class MainMenuState extends State<MainMenu> {
           ),
           BottomNavigationBarItem(
             backgroundColor: bottomNavColor,
-            icon: Icon(Icons.person),
-            label: 'Account',
-          ),
-          BottomNavigationBarItem(
-            backgroundColor: bottomNavColor,
             icon: Icon(Icons.group),
             label: 'Partner List',
           ),
         ],
       ),
+    );
+  }
+
+  void onSelected(BuildContext context, int item) {
+    switch (item) {
+      case 0:
+        showAlertDialog(context); //logout
+        break;
+      case 1:
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => UserAccount())); //Account
+        break;
+    }
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text("Yes"),
+      onPressed: () {
+        service.loginOut(context);
+      },
+    );
+
+    Widget cancel = FlatButton(
+      child: Text("No"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Logout"),
+      content: Text("Are you sure to logout?"),
+      actions: [okButton, cancel],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }
