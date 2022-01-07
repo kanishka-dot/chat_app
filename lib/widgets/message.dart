@@ -126,7 +126,6 @@ class _MessageState extends State<Message> {
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          print("Ado data naaaa");
         } else {
           print(snapshot.data.docs);
         }
@@ -228,7 +227,7 @@ class _MessageState extends State<Message> {
                 physics: ScrollPhysics(),
                 reverse: false,
                 child: Container(
-                  height: MediaQuery.of(context).size.height - 150,
+                  height: MediaQuery.of(context).size.height - 200,
                   child: createListMessage(),
                 ),
               ),

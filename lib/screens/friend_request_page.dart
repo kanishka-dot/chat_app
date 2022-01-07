@@ -17,6 +17,7 @@ class FriendsState extends State<FriendsRequest> {
   bool _isProgressBarShown = true;
   final _fontSize = const TextStyle(fontSize: 13.0);
   List<FriendsModel> _listFriends;
+  Map<String, String> partnerRequestWay = Map();
 
   @override
   void initState() {
@@ -29,7 +30,7 @@ class FriendsState extends State<FriendsRequest> {
     Widget widget;
 
     if (_listFriends == null) {
-      widget = new Center(child: new Text("No Friend Request"));
+      widget = new Center(child: new Text("No Partner Request"));
     } else {
       if (_listFriends.length > 0) {
         widget = new ListView.builder(
@@ -42,7 +43,7 @@ class FriendsState extends State<FriendsRequest> {
               return _buildRow(_listFriends[i]);
             });
       } else {
-        widget = new Center(child: new Text("No Friend Request"));
+        widget = new Center(child: new Text("No Partner Request"));
       }
     }
 
@@ -59,7 +60,9 @@ class FriendsState extends State<FriendsRequest> {
         friendsModel.name,
         style: _fontSize,
       ),
-      trailing: Row2Buttons("Add", "Reject", friendsModel),
+      trailing: partnerRequestWay[friendsModel.userid] == 'sent'
+          ? ElevatedButton(onPressed: null, child: Text('Pending'))
+          : Row2Buttons("Add", "Reject", friendsModel),
       onTap: () {
         setState(() {});
       },
@@ -79,42 +82,42 @@ class FriendsState extends State<FriendsRequest> {
         .collection('friends')
         .doc(loginUser)
         .collection('friends')
-        .where('status', isEqualTo: 'pending')
+        .where('status', whereIn: ['pending', 'sent'])
         .snapshots()
         .forEach((querySnapshot) {
-      List<String> listFriend = <String>[];
-      if (querySnapshot.size > 0) {
-        querySnapshot.docs.forEach((values) {
-          var userid = values["userid"];
-
-          listFriend.add(userid);
-        });
-      }
-
-      List<String> newUser = <String>[""];
-      FirebaseFirestore.instance
-          .collection('users')
-          .where('userid',
-              whereIn: (listFriend == null || listFriend.length == 0
-                  ? newUser
-                  : listFriend)) // remove friends from find friends list
-          .snapshots()
-          .forEach((querySnapshot) {
-        List<FriendsModel> listFriends = <FriendsModel>[];
-        bool isPending = false;
-        querySnapshot.docs.forEach((doc) {
-          if (doc["userid"] != loginUser) {
-            FriendsModel friendsModel = new FriendsModel(doc["username"],
-                doc["dpurl"], doc["userid"], isPending, "", "", "", "", "");
-            listFriends.add(friendsModel);
+          List<String> listFriend = <String>[];
+          if (querySnapshot.size > 0) {
+            querySnapshot.docs.forEach((values) {
+              var userid = values["userid"];
+              partnerRequestWay[values["userid"]] = values["status"];
+              listFriend.add(userid);
+            });
           }
-        });
 
-        setState(() {
-          _listFriends = listFriends;
-          _isProgressBarShown = false;
+          List<String> newUser = <String>[""];
+          FirebaseFirestore.instance
+              .collection('users')
+              .where('userid',
+                  whereIn: (listFriend == null || listFriend.length == 0
+                      ? newUser
+                      : listFriend)) // remove friends from find friends list
+              .snapshots()
+              .forEach((querySnapshot) {
+            List<FriendsModel> listFriends = <FriendsModel>[];
+            bool isPending = false;
+            querySnapshot.docs.forEach((doc) {
+              if (doc["userid"] != loginUser) {
+                FriendsModel friendsModel = new FriendsModel(doc["username"],
+                    doc["dpurl"], doc["userid"], isPending, "", "", "", "", "");
+                listFriends.add(friendsModel);
+              }
+            });
+
+            setState(() {
+              _listFriends = listFriends;
+              _isProgressBarShown = false;
+            });
+          });
         });
-      });
-    });
   }
 }

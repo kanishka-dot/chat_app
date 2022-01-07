@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat_app/screens/profile_card.dart';
 import 'package:chat_app/widgets/SquareAvatar.dart';
 import 'package:chat_app/widgets/message.dart';
 import 'package:flutter/material.dart';
@@ -13,12 +14,12 @@ class Conversation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(),
+      appBar: buildAppBar(context),
       body: Message(receiverId: receiverid),
     );
   }
 
-  AppBar buildAppBar() {
+  AppBar buildAppBar(BuildContext context) {
     print(receiverid);
     return AppBar(
       automaticallyImplyLeading: false,
@@ -36,6 +37,12 @@ class Conversation extends StatelessWidget {
                   receiverName,
                   style: TextStyle(fontSize: 16),
                 ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProfileCard(receiverid)));
+                },
               )
               // Text(
               //   "Active 2m ago",

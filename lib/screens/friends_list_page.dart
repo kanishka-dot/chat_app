@@ -113,8 +113,10 @@ class FriendsState extends State<FriendsPage> {
               ),
             ),
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => ProfileCard(friendsModel)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ProfileCard(friendsModel.userid)));
       },
     );
   }

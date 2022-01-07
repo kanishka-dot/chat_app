@@ -1,6 +1,6 @@
 import 'dart:collection';
-
 import 'package:chat_app/screens/conversation_page.dart';
+import 'package:chat_app/screens/profile_card.dart';
 import 'package:chat_app/widgets/SquareAvatar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -73,9 +73,18 @@ class _PartnerListState extends State<PartnerList> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Conversation(
-                                    x['userid'], x['username'], x['dpurl'])))
+                                builder: (context) => ProfileCard(x['userid'])))
                       },
+                      trailing: ElevatedButton(
+                        child: Text("Message"),
+                        onPressed: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Conversation(
+                                      x['userid'], x['username'], x['dpurl'])))
+                        },
+                      ),
                     ),
                     Divider()
                   ]);
