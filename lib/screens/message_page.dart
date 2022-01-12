@@ -125,6 +125,7 @@ class _ShowMessage extends State<ShowMessage> {
         .doc(loginUser)
         .collection('friends')
         .where("status", isEqualTo: 'accept')
+        .where("last_chat", isNotEqualTo: "")
         .snapshots()
         .forEach((element) {
       List<String> listFriends = <String>[];

@@ -298,6 +298,7 @@ class FriendsState extends State<FriendsPage> {
         'userid': userid,
         'status': 'pending',
         'request': 'receive',
+        'last_chat': "",
         'create_date': DateTime.now()
       });
       userStore
@@ -309,6 +310,7 @@ class FriendsState extends State<FriendsPage> {
         'userid': reciveruid,
         'status': 'sent',
         'request': 'send',
+        'last_chat': "",
         'create_date': DateTime.now()
       });
 
