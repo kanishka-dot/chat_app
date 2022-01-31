@@ -65,42 +65,44 @@ class MainMenuState extends State<MainMenu> {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text("Love Me"),
-        actions: [
-          PopupMenuButton<int>(
-              onSelected: (item) => onSelected(context, item),
-              itemBuilder: (context) => [
-                    PopupMenuItem(
-                        value: 1,
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.person,
-                              color: Colors.black,
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Text('Account')
-                          ],
-                        )),
-                    PopupMenuDivider(),
-                    PopupMenuItem(
-                        textStyle: TextStyle(color: Colors.red),
-                        value: 0,
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.logout,
-                              color: Colors.red,
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Text('Log Out')
-                          ],
-                        ))
-                  ])
-        ],
+        actions: isReg
+            ? [
+                PopupMenuButton<int>(
+                    onSelected: (item) => onSelected(context, item),
+                    itemBuilder: (context) => [
+                          PopupMenuItem(
+                              value: 1,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.person,
+                                    color: Colors.black,
+                                  ),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Text('Account')
+                                ],
+                              )),
+                          PopupMenuDivider(),
+                          PopupMenuItem(
+                              textStyle: TextStyle(color: Colors.red),
+                              value: 0,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.logout,
+                                    color: Colors.red,
+                                  ),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Text('Logout')
+                                ],
+                              ))
+                        ])
+              ]
+            : [],
       ),
       body: screens[currentindex],
       bottomNavigationBar: BottomNavigationBar(
