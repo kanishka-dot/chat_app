@@ -114,6 +114,24 @@ class _MessageState extends State<Message> {
       "type": type,
       "time": DateTime.now(),
     });
+
+    messageStore //update last chat time in user
+        .collection("friends")
+        .doc(id)
+        .collection('friends')
+        .doc(receiverId)
+        .update({
+      'last_chat': DateTime.now(),
+    });
+
+    messageStore //update last chat time in reciver
+        .collection("friends")
+        .doc(receiverId)
+        .collection('friends')
+        .doc(id)
+        .update({
+      'last_chat': DateTime.now(),
+    });
   }
 
   createListMessage() {
