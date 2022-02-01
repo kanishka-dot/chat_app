@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 class PushNotificationModel {
   final String title;
   final String body;

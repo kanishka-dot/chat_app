@@ -1,6 +1,8 @@
 import 'package:chat_app/config/firebase.dart';
+import 'package:chat_app/models/pushnotificationModel.dart';
 import 'package:chat_app/screens/main_menu.dart';
 import 'package:chat_app/screens/slider_screen.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:chat_app/screens/test1.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -40,6 +42,33 @@ class MyApp extends StatefulWidget {
 class _MyApp extends State<MyApp> {
   Service service = Service();
   Widget currentPage = IntroSliderPage();
+  FirebaseMessaging messaging;
+  int totNotifcount;
+
+  //model
+  PushNotificationModel _notificationModel;
+
+  void registerNotification() async {
+    messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      provisional: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print("User Granted the permission");
+
+      // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      //   PushNotificationModel notification = PushNotificationModel(
+      //     )
+      //  })
+
+    }
+  }
+
   @override
   void initState() {
     super.initState();
