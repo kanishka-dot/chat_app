@@ -61,11 +61,18 @@ class _MyApp extends State<MyApp> {
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       print("User Granted the permission");
 
-      // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      //   PushNotificationModel notification = PushNotificationModel(
-      //     )
-      //  })
-
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        PushNotificationModel notification = PushNotificationModel(
+          title: message.notification.title,
+          body: message.notification.body,
+          dataTitle: message.data['title'],
+          databody: message.data['body'],
+        );
+        setState(() {
+          totNotifcount++;
+          _notificationModel = notification;
+        });
+      });
     }
   }
 

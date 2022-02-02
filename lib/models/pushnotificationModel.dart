@@ -7,5 +7,5 @@ class PushNotificationModel {
   final String databody;
 
   const PushNotificationModel(
-      this.title, this.body, this.dataTitle, this.databody);
+      {this.title, this.body, this.dataTitle, this.databody});
 }
