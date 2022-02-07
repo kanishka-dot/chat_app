@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:chat_app/config/firebase.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat_app/config/notificationApi.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class UserAccount extends StatefulWidget {
 
 class _UserAccountState extends State<UserAccount> {
   Service service = Service();
+  NotificationApi notification = NotificationApi();
   SharedPreferences preferences;
   TextEditingController nameTextEditorController;
   TextEditingController statusTextEditorController;
@@ -893,6 +895,30 @@ class _UserAccountState extends State<UserAccount> {
                       onPressed: () => {updateData()},
                       child: Text(
                         "Update",
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      color: Colors.blueGrey,
+                      highlightColor: Colors.grey,
+                      splashColor: Colors.transparent,
+                      textColor: Colors.white,
+                      padding: EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
+                      shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(32.0))),
+                    ),
+                    margin: EdgeInsets.only(top: 30.0, bottom: 10.0),
+                  ),
+
+                  Container(
+                    child: FlatButton(
+                      onPressed: () => {
+                        NotificationApi.showNotification(
+                            title: "Saraha",
+                            body: "Hi Shara, how you do",
+                            payload: "asr.as")
+                      },
+                      child: Text(
+                        "Test",
                         style: TextStyle(fontSize: 16.0),
                       ),
                       color: Colors.blueGrey,

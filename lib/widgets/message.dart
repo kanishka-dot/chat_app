@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_app/config/firebase.dart';
+import 'package:chat_app/config/notificationApi.dart';
 import 'package:chat_app/widgets/TimeStampToDate.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -159,6 +160,8 @@ class _MessageState extends State<Message> {
             primary: true,
             itemBuilder: (context, i) {
               QueryDocumentSnapshot x = snapshot.data.docs[i];
+              NotificationApi.showNotification(
+                  title: x['sent_by'], body: x['message'], payload: "asr.as");
               return ListTile(
                 title: Column(
                     crossAxisAlignment: loginUser.uid == x['sent_by']
