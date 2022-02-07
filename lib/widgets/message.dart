@@ -32,6 +32,7 @@ class _MessageState extends State<Message> {
   File imageFile;
   String imageUrl;
   bool isLoading = false;
+  int messageCount = 0;
   // AudioCache _audioCache;
 
   String chatId;
@@ -160,8 +161,7 @@ class _MessageState extends State<Message> {
             primary: true,
             itemBuilder: (context, i) {
               QueryDocumentSnapshot x = snapshot.data.docs[i];
-              NotificationApi.showNotification(
-                  title: x['sent_by'], body: x['message'], payload: "asr.as");
+
               return ListTile(
                 title: Column(
                     crossAxisAlignment: loginUser.uid == x['sent_by']

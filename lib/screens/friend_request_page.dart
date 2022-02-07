@@ -15,7 +15,7 @@ class FriendsRequest extends StatefulWidget {
 class FriendsState extends State<FriendsRequest> {
   var loginUser = FirebaseAuth.instance.currentUser.uid;
   bool _isProgressBarShown = true;
-  final _fontSize = const TextStyle(fontSize: 13.0);
+  final _fontSize = const TextStyle(fontSize: 15.0);
   List<FriendsModel> _listFriends;
   Map<String, String> partnerRequestWay = Map();
 
