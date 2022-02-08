@@ -5,9 +5,11 @@ import 'package:chat_app/screens/slider_screen.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:workmanager/workmanager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
   await Firebase.initializeApp();
   runApp(new MyApp());
   configLoading();
