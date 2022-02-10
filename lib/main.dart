@@ -15,6 +15,13 @@ void main() async {
   configLoading();
 }
 
+void callbackDispatcher() {
+  Workmanager().executeTask((taskName, inputData) async {
+    if (taskName == "uniqueKey") {}
+    return Future.value(true);
+  });
+}
+
 void configLoading() {
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
