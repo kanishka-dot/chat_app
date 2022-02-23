@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 class UserAccount extends StatefulWidget {
   @override
@@ -236,6 +237,10 @@ class _UserAccountState extends State<UserAccount> {
     uploadImageTofirestoreStorage();
   }
 
+  Future<void> _cropImage() async {
+    File cropped = await ImageCrop
+  }
+
   Future uploadImageTofirestoreStorage() async {
     String mFilename = id;
     Reference storagereferance =
@@ -333,7 +338,7 @@ class _UserAccountState extends State<UserAccount> {
         setState(() {
           isLoading = false;
         });
-        Fluttertoast.showToast(msg: "Update Successfully");
+        Fluttertoast.showToast(msg: "Successfully Updated");
       });
     } catch (error) {
       Fluttertoast.showToast(msg: error);

@@ -71,7 +71,7 @@ class Row2Buttons extends StatelessWidget {
           .collection('friends')
           .doc(loginUser)
           .update({"status": "accept"});
-      Fluttertoast.showToast(msg: "Friend Request Accept");
+      Fluttertoast.showToast(msg: "Friend Request Accepted");
     } catch (e) {
       Fluttertoast.showToast(msg: "Error occured accepting friend request");
     }
@@ -93,7 +93,7 @@ class Row2Buttons extends StatelessWidget {
           .doc(loginUser)
           .delete();
 
-      Fluttertoast.showToast(msg: "Friend Request Reject");
+      Fluttertoast.showToast(msg: "Friend Request Rejected");
     } catch (e) {
       Fluttertoast.showToast(msg: "Error occured rejecting friend request");
     }

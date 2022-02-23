@@ -14,6 +14,7 @@ class PartnerList extends StatefulWidget {
 }
 
 class _PartnerListState extends State<PartnerList> {
+  final _fontSize = const TextStyle(fontSize: 15.0);
   List<String> _listFriends = <String>[""];
   Map<String, String> partnerRequestWay = Map();
   bool isLoading = true;
@@ -66,6 +67,7 @@ class _PartnerListState extends State<PartnerList> {
                       ),
                       title: Text(
                         x['username'],
+                        style: _fontSize,
                       ),
                       subtitle:
                           Text("Request:" + partnerRequestWay[x['userid']]),
@@ -76,7 +78,10 @@ class _PartnerListState extends State<PartnerList> {
                                 builder: (context) => ProfileCard(x['userid'])))
                       },
                       trailing: ElevatedButton(
-                        child: Text("Message"),
+                        child: Text(
+                          "Message",
+                          style: TextStyle(color: Colors.white, fontSize: 12),
+                        ),
                         onPressed: () => {
                           Navigator.push(
                               context,
