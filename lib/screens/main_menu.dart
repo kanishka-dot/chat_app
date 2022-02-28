@@ -5,10 +5,12 @@ import 'package:chat_app/screens/message_page.dart';
 import 'package:chat_app/screens/partner_list.dart';
 import 'package:chat_app/screens/user_account.dart';
 import 'package:chat_app/screens/user_account_page.dart';
+import 'package:chat_app/screens/user_feedback.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/config/color_palette.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:quick_feedback/quick_feedback.dart';
 
 class MainMenu extends StatefulWidget {
   final bool isReg;
@@ -86,6 +88,21 @@ class MainMenuState extends State<MainMenu> {
                               )),
                           PopupMenuDivider(),
                           PopupMenuItem(
+                              value: 2,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.feedback,
+                                    color: Colors.black,
+                                  ),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Text('Feedback')
+                                ],
+                              )),
+                          PopupMenuDivider(),
+                          PopupMenuItem(
                               textStyle: TextStyle(color: Colors.red),
                               value: 0,
                               child: Row(
@@ -152,6 +169,9 @@ class MainMenuState extends State<MainMenu> {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => UserAccount())); //Account
         break;
+      case 2:
+        showFeedback(context); //Account
+        break;
     }
   }
 
@@ -181,6 +201,28 @@ class MainMenuState extends State<MainMenu> {
       context: context,
       builder: (BuildContext context) {
         return alert;
+      },
+    );
+  }
+
+  showFeedback(context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return QuickFeedback(
+          title: 'Leave a feedback',
+          showTextBox: true,
+          textBoxHint: 'Share your feedback',
+          submitText: 'SUBMIT',
+          onSubmitCallback: (feedback) {
+            print('$feedback');
+            Navigator.of(context).pop();
+          },
+          askLaterText: 'ASK LATER',
+          onAskLaterCallback: () {
+            print('Do something on ask later click');
+          },
+        );
       },
     );
   }

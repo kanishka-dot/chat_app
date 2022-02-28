@@ -64,6 +64,7 @@ class _UserAccountState extends State<UserAccount> {
   File imgeFileAvatar;
   bool isLoading = false;
   bool _childstate = false;
+  File tempImage;
 
   var heightFormater =
       new MaskTextInputFormatter(mask: '#.##', filter: {"#": RegExp(r'[0-9]')});
@@ -228,17 +229,23 @@ class _UserAccountState extends State<UserAccount> {
     PickedFile pickedFile = await picker.getImage(source: ImageSource.gallery);
     image = File(pickedFile.path);
 
-    if (image != null) {
-      setState(() {
-        this.imgeFileAvatar = image;
-        isLoading = true;
-      });
-    }
-    uploadImageTofirestoreStorage();
+    setState(() {
+      tempImage = image;
+    });
+
+    _cropImage();
   }
 
   Future<void> _cropImage() async {
-    File cropped = await ImageCrop
+    File cropped = await ImageCropper().cropImage(sourcePath: tempImage.path);
+    setState(() {
+      if (cropped != null) {
+        this.imgeFileAvatar = cropped;
+        isLoading = true;
+      }
+    });
+
+    uploadImageTofirestoreStorage();
   }
 
   Future uploadImageTofirestoreStorage() async {
@@ -914,29 +921,29 @@ class _UserAccountState extends State<UserAccount> {
                     margin: EdgeInsets.only(top: 30.0, bottom: 10.0),
                   ),
 
-                  Container(
-                    child: FlatButton(
-                      onPressed: () => {
-                        NotificationApi.showNotification(
-                            title: "Saraha",
-                            body: "Hi Shara, how you do",
-                            payload: "asr.as")
-                      },
-                      child: Text(
-                        "Test",
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                      color: Colors.blueGrey,
-                      highlightColor: Colors.grey,
-                      splashColor: Colors.transparent,
-                      textColor: Colors.white,
-                      padding: EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
-                      shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(32.0))),
-                    ),
-                    margin: EdgeInsets.only(top: 30.0, bottom: 10.0),
-                  ),
+                  // Container(
+                  //   child: FlatButton(
+                  //     onPressed: () => {
+                  //       NotificationApi.showNotification(
+                  //           title: "Saraha",
+                  //           body: "Hi Shara, how you do",
+                  //           payload: "asr.as")
+                  //     },
+                  //     child: Text(
+                  //       "Test",
+                  //       style: TextStyle(fontSize: 16.0),
+                  //     ),
+                  //     color: Colors.blueGrey,
+                  //     highlightColor: Colors.grey,
+                  //     splashColor: Colors.transparent,
+                  //     textColor: Colors.white,
+                  //     padding: EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
+                  //     shape: RoundedRectangleBorder(
+                  //         borderRadius:
+                  //             BorderRadius.all(Radius.circular(32.0))),
+                  //   ),
+                  //   margin: EdgeInsets.only(top: 30.0, bottom: 10.0),
+                  // ),
                   //logout
                   // Padding(
                   //   padding: EdgeInsets.only(left: 50.0, right: 50.0),

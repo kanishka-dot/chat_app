@@ -32,7 +32,7 @@ class _MessageState extends State<Message> {
   File imageFile;
   String imageUrl;
   bool isLoading = false;
-  int messageCount = 0;
+
   // AudioCache _audioCache;
 
   String chatId;
