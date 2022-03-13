@@ -1,6 +1,5 @@
 import 'package:chat_app/screens/additional_infor_form.dart';
 import 'package:chat_app/screens/user_account_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class UserAccountOptions extends StatefulWidget {

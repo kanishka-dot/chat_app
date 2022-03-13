@@ -1,5 +1,4 @@
 import 'package:chat_app/config/firebase.dart';
-import 'package:chat_app/screens/friends_list_page.dart';
 import 'package:chat_app/screens/main_menu.dart';
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';

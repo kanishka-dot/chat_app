@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'package:chat_app/screens/conversation_page.dart';
 import 'package:chat_app/screens/profile_card.dart';
 import 'package:chat_app/widgets/SquareAvatar.dart';

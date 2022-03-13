@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:chat_app/config/color_palette.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class Row2Buttons extends StatelessWidget {

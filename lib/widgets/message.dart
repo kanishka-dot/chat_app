@@ -1,13 +1,13 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_app/config/firebase.dart';
-import 'package:chat_app/config/notificationApi.dart';
 import 'package:chat_app/widgets/TimeStampToDate.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,6 +32,7 @@ class _MessageState extends State<Message> {
   File imageFile;
   String imageUrl;
   bool isLoading = false;
+  File tempImage;
 
   // AudioCache _audioCache;
 
@@ -75,9 +76,26 @@ class _MessageState extends State<Message> {
         await picker.getImage(source: ImageSource.gallery, imageQuality: 85);
     imageFile = File(pickedFile.path);
 
-    if (imageFile != null) {
-      isLoading = true;
-    }
+    // if (imageFile != null) {
+    //   isLoading = true;
+    // }
+
+    setState(() {
+      tempImage = imageFile;
+    });
+
+    _cropImage();
+  }
+
+  Future<void> _cropImage() async {
+    File cropped = await ImageCropper().cropImage(sourcePath: tempImage.path);
+    setState(() {
+      if (cropped != null) {
+        this.imageFile = cropped;
+        isLoading = true;
+      }
+    });
+
     uploadImageFile();
   }
 

@@ -45,6 +45,9 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+               <intent-filter>
+                <action android:name="FLUTTER_NOTIFICATION_CLICK" />
+            </intent-filter>
         </activity>
          <activity
             android:name="com.yalantis.ucrop.UCropActivity"

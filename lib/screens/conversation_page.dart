@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_app/screens/profile_card.dart';
 import 'package:chat_app/widgets/SquareAvatar.dart';
 import 'package:chat_app/widgets/message.dart';

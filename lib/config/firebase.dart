@@ -1,8 +1,8 @@
-import 'package:chat_app/screens/login_page.dart';
 import 'package:chat_app/screens/main_menu.dart';
 import 'package:chat_app/screens/register_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -194,8 +194,8 @@ class Service {
   }
 
   // create user function
-  void createUser(String name, String phonenumber, String email, DateTime dob,
-      String gender, String height, BuildContext context) async {
+  Future<int> createUser(String name, String phonenumber, String email,
+      DateTime dob, String gender, String height, BuildContext context) async {
     try {
       EasyLoading.show(status: 'Please wait...');
       print("Print phone numer");
@@ -264,18 +264,25 @@ class Service {
 
                           if (user != null) {
                             String userId = user.uid;
-                            await isNewUser(userId, name, phonenumber, email,
-                                dob, gender, height);
-                            EasyLoading.dismiss();
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MainMenu(
-                                        isReg: true,
-                                      )),
-                              (route) => false,
-                            );
+                            int result = await isNewUser(userId, name,
+                                phonenumber, email, dob, gender, height);
+                            if (result == 1) {
+                              EasyLoading.dismiss();
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MainMenu(
+                                          isReg: true,
+                                        )),
+                                (route) => false,
+                              );
+                            } else {
+                              Navigator.of(context).pop();
+                              EasyLoading.dismiss();
+                              throw Exception("Error occured in creating user");
+                            }
                           } else {
+                            Navigator.of(context).pop();
                             EasyLoading.showError('Failed with Error');
                             print("Error");
                           }
@@ -287,8 +294,11 @@ class Service {
           },
           codeAutoRetrievalTimeout: null,
           timeout: Duration(seconds: 100));
+      return 1;
     } catch (e) {
+      EasyLoading.dismiss();
       errorHandle(context, e);
+      return 0;
     }
   }
 
@@ -380,40 +390,54 @@ class Service {
     await storage.write(key: "token", value: token);
   }
 
+  Future<void> storeFCMToken(String userId) async {
+    await FirebaseMessaging.instance.getToken().then((token) {
+      print("my fcm toke--> " + token);
+      userStore.collection("users").doc(userId).update({"fcm_token": token});
+    });
+  }
+
   Future<String> getToken() async {
     return await storage.read(key: "token");
   }
 
-  Future<void> isNewUser(userId, String name, String phonenumber, String email,
+  Future<int> isNewUser(userId, String name, String phonenumber, String email,
       DateTime dob, String gender, String height) async {
-    var result = await userStore.collection("users").doc(userId).get();
-    if (!result.exists) {
-      await userStore.collection("users").doc(userId).set({
-        "email": email,
-        "username": name,
-        "dpurl": "",
-        "userid": userId,
-        "gender": gender,
-        "dob": dob,
-        "height": height,
-        "age": "",
-        "martial": "",
-        "nochildrn": "",
-        "country": "",
-        "residstat": "",
-        "residcity": "",
-        "citzne": "",
-        "job": "",
-        "status": "active",
-        "text_status": "",
-        "cre_date": DateTime.now()
-      });
-      await saveUserDetails(userId);
-      await storeTokenAndDate(userId);
-      await userStore.collection("friends").doc(userId).set({});
-    } else {
-      await saveUserDetails(userId);
-      await storeTokenAndDate(userId);
+    try {
+      var result = await userStore.collection("users").doc(userId).get();
+      if (!result.exists) {
+        await userStore.collection("users").doc(userId).set({
+          "email": email,
+          "username": name,
+          "dpurl": "",
+          "userid": userId,
+          "gender": gender,
+          "dob": dob,
+          "height": height,
+          "age": "",
+          "martial": "",
+          "nochildrn": "",
+          "country": "",
+          "residstat": "",
+          "residcity": "",
+          "citzne": "",
+          "job": "",
+          "status": "active",
+          "text_status": "",
+          "cre_date": DateTime.now()
+        });
+        await saveUserDetails(userId);
+        await storeTokenAndDate(userId);
+        await storeFCMToken(userId);
+        await userStore.collection("friends").doc(userId).set({});
+      } else {
+        await saveUserDetails(userId);
+        await storeTokenAndDate(userId);
+        await storeFCMToken(userId);
+      }
+      return 1;
+    } catch (error) {
+      return 0;
     }
   }
 }
