@@ -22,7 +22,7 @@ exports.notifyNewMessage = functions.firestore
     const payLoad = {
       notification: {
         title: `Love Me | ${userName}`,
-        body: message.message,
+        body: message.type == 2 ? "Image": message.message,
         clickAction: "FLUTTER_NOTIFICATION_CLICK",
       },
     };

@@ -88,15 +88,18 @@ class _MessageState extends State<Message> {
   }
 
   Future<void> _cropImage() async {
-    File cropped = await ImageCropper().cropImage(sourcePath: tempImage.path);
+    File cropped = await ImageCropper().cropImage(
+        androidUiSettings: AndroidUiSettings(lockAspectRatio: false),
+        sourcePath: tempImage.path);
     setState(() {
       if (cropped != null) {
         this.imageFile = cropped;
         isLoading = true;
       }
     });
-
-    uploadImageFile();
+    if (cropped != null) {
+      uploadImageFile();
+    }
   }
 
   uploadImageFile() async {

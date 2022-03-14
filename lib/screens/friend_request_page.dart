@@ -61,6 +61,15 @@ class FriendsState extends State<FriendsRequest> {
         friendsModel.name,
         style: _fontSize,
       ),
+      subtitle: Text(
+        "Age:" +
+            friendsModel.age +
+            "\nHeight:" +
+            friendsModel.height +
+            " ft"
+                "\nCity:" +
+            friendsModel.city,
+      ),
       trailing: partnerRequestWay[friendsModel.userid] == 'sent'
           ? ElevatedButton(onPressed: null, child: Text('Pending'))
           : Row2Buttons("Add", "Reject", friendsModel),

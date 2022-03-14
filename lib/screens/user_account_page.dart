@@ -237,7 +237,9 @@ class _UserAccountState extends State<UserAccount> {
   }
 
   Future<void> _cropImage() async {
-    File cropped = await ImageCropper().cropImage(sourcePath: tempImage.path);
+    File cropped = await ImageCropper().cropImage(
+        androidUiSettings: AndroidUiSettings(lockAspectRatio: false),
+        sourcePath: tempImage.path);
     setState(() {
       if (cropped != null) {
         this.imgeFileAvatar = cropped;
