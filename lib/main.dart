@@ -106,7 +106,7 @@ class _MyApp extends State<MyApp> {
     return new MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: new ThemeData(
-          primarySwatch: Colors.blueGrey,
+          primarySwatch: Colors.teal,
         ),
         // home: Test(),
         builder: EasyLoading.init(),

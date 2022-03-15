@@ -911,7 +911,7 @@ class _UserAccountState extends State<UserAccount> {
                         "Update",
                         style: TextStyle(fontSize: 16.0),
                       ),
-                      color: Colors.blueGrey,
+                      color: const Color(0xFF7E0F4A),
                       highlightColor: Colors.grey,
                       splashColor: Colors.transparent,
                       textColor: Colors.white,

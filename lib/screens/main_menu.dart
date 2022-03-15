@@ -51,7 +51,7 @@ class MainMenuState extends State<MainMenu> {
     loadFCM();
     listenFCM();
     requestPermission();
-    getToken();
+    // getToken();
     loginUser = FirebaseAuth.instance.currentUser;
     if (isReg) {
       currentindex = 0;

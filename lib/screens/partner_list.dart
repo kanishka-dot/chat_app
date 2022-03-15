@@ -1,3 +1,4 @@
+import 'package:chat_app/config/color_palette.dart';
 import 'package:chat_app/screens/conversation_page.dart';
 import 'package:chat_app/screens/profile_card.dart';
 import 'package:chat_app/widgets/SquareAvatar.dart';
@@ -68,8 +69,17 @@ class _PartnerListState extends State<PartnerList> {
                         x['username'],
                         style: _fontSize,
                       ),
-                      subtitle:
-                          Text("Request:" + partnerRequestWay[x['userid']]),
+                      subtitle: Text(
+                        "Request:" +
+                            partnerRequestWay[x['userid']] +
+                            "\nAge:" +
+                            x['age'] +
+                            "\nHeight:" +
+                            x['height'] +
+                            " ft"
+                                "\nCity:" +
+                            x['residcity'],
+                      ),
                       onTap: () => {
                         Navigator.push(
                             context,
@@ -88,6 +98,9 @@ class _PartnerListState extends State<PartnerList> {
                                   builder: (context) => Conversation(
                                       x['userid'], x['username'], x['dpurl'])))
                         },
+                        style: ElevatedButton.styleFrom(
+                          primary: sendrequestbutton, // backgr/ound
+                        ),
                       ),
                     ),
                     Divider()

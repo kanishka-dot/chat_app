@@ -74,12 +74,23 @@ class _Register extends State<Register> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Love Me',
-                    style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 42,
-                        fontWeight: FontWeight.bold),
+                  // Text(
+                  //   'Love Me',
+                  //   style: TextStyle(
+                  //       color: Colors.red,
+                  //       fontSize: 42,
+                  //       fontWeight: FontWeight.bold),
+                  // ),
+                  Container(
+                    height: 120.0,
+                    width: 300.0,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/logo.png'),
+                        fit: BoxFit.fill,
+                      ),
+                      shape: BoxShape.rectangle,
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
@@ -217,7 +228,7 @@ class _Register extends State<Register> {
                     style: TextButton.styleFrom(
                         primary: Colors.white,
                         elevation: 3,
-                        backgroundColor: Colors.blue,
+                        backgroundColor: const Color(0xFF7E0F4A),
                         shape: RoundedRectangleBorder(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(32.0))),
@@ -225,7 +236,7 @@ class _Register extends State<Register> {
                   ),
 
                   ElevatedButton(
-                    child: Text("Check Friend List"),
+                    child: Text("Check Partner List"),
                     onPressed: () {
                       if (true) {
                         Navigator.push(

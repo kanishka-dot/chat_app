@@ -1,3 +1,4 @@
+import 'package:chat_app/config/color_palette.dart';
 import 'package:chat_app/widgets/Row2Buttons.dart';
 import 'package:chat_app/widgets/SquareAvatar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -71,7 +72,10 @@ class FriendsState extends State<FriendsRequest> {
             friendsModel.city,
       ),
       trailing: partnerRequestWay[friendsModel.userid] == 'sent'
-          ? ElevatedButton(onPressed: null, child: Text('Pending'))
+          ? ElevatedButton(
+              onPressed: null,
+              child: Text('Pending'),
+              style: ElevatedButton.styleFrom(primary: sendrequestbutton))
           : Row2Buttons("Add", "Reject", friendsModel),
       onTap: () {
         Navigator.push(

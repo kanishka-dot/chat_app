@@ -104,6 +104,15 @@ class _ShowMessage extends State<ShowMessage> {
                       title: Text(
                         x['username'],
                       ),
+                      subtitle: Text(
+                        "Age:" +
+                            x['age'] +
+                            "\nHeight:" +
+                            x['height'] +
+                            " ft"
+                                "\nCity:" +
+                            x['residcity'],
+                      ),
                       onTap: () => {
                         Navigator.push(
                             context,
