@@ -199,6 +199,10 @@ class _MessageState extends State<Message> {
                               padding: EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 10),
                               child: Column(
+                                crossAxisAlignment:
+                                    loginUser.uid == x['sent_by']
+                                        ? CrossAxisAlignment.start
+                                        : CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     x['message'],
@@ -326,10 +330,10 @@ class _MessageState extends State<Message> {
                     height: 47,
                     width: 47,
                     decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: Colors.blueGrey),
+                        shape: BoxShape.circle, color: Colors.teal),
                     child: Icon(
                       Icons.send,
-                      size: 33,
+                      size: 35,
                     ),
                   ),
                   onTap: () => {

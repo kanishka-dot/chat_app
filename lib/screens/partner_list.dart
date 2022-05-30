@@ -70,9 +70,9 @@ class _PartnerListState extends State<PartnerList> {
                         style: _fontSize,
                       ),
                       subtitle: Text(
-                        "Request:" +
-                            partnerRequestWay[x['userid']] +
-                            "\nAge:" +
+                        // "Request:" +
+                        //     partnerRequestWay[x['userid']] +
+                            "Age:" +
                             x['age'] +
                             "\nHeight:" +
                             x['height'] +

@@ -203,6 +203,7 @@ class MainMenuState extends State<MainMenu> {
             : [],
       ),
       body: screens[currentindex],
+      
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentindex,
         onTap: (index) => setState(() => {

@@ -16,8 +16,14 @@ exports.notifyNewMessage = functions.firestore
       .doc(message.received_by)
       .get();
 
-    const token = await querySnapShot.get("fcm_token");
-    const userName = await querySnapShot.get("username");
+
+      const sent_user = await db
+      .collection("users")
+      .doc(message.sent_by)
+      .get();
+
+    const token = await querySnapShot.get("fcm_token"); //recivers token
+    const userName = await sent_user.get("username");// senders name
 
     const payLoad = {
       notification: {

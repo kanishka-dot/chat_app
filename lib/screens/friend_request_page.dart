@@ -20,6 +20,7 @@ class FriendsState extends State<FriendsRequest> {
   final _fontSize = const TextStyle(fontSize: 15.0);
   List<FriendsModel> _listFriends;
   Map<String, String> partnerRequestWay = Map();
+  Map<String, String> partnerRequestSentrev = Map();
 
   @override
   void initState() {
@@ -63,7 +64,9 @@ class FriendsState extends State<FriendsRequest> {
         style: _fontSize,
       ),
       subtitle: Text(
-        "Age:" +
+        "Request:" +
+            partnerRequestSentrev[friendsModel.userid] +
+            "\nAge:" +
             friendsModel.age +
             "\nHeight:" +
             friendsModel.height +
@@ -76,7 +79,12 @@ class FriendsState extends State<FriendsRequest> {
               onPressed: null,
               child: Text('Pending'),
               style: ElevatedButton.styleFrom(primary: sendrequestbutton))
-          : Row2Buttons("Add", "Reject", friendsModel),
+          : partnerRequestWay[friendsModel.userid] == 'accept'
+              ? ElevatedButton(
+                  onPressed: null,
+                  child: Text('Freinds'),
+                  style: ElevatedButton.styleFrom(primary: sendrequestbutton))
+              : Row2Buttons("Add", "Reject", friendsModel),
       onTap: () {
         Navigator.push(
             context,
@@ -99,7 +107,7 @@ class FriendsState extends State<FriendsRequest> {
         .collection('friends')
         .doc(loginUser)
         .collection('friends')
-        .where('status', whereIn: ['pending', 'sent'])
+        .where('status', whereIn: ['pending', 'sent', 'accept'])
         .snapshots()
         .forEach((querySnapshot) {
           List<String> listFriend = <String>[];
@@ -107,6 +115,7 @@ class FriendsState extends State<FriendsRequest> {
             querySnapshot.docs.forEach((values) {
               var userid = values["userid"];
               partnerRequestWay[values["userid"]] = values["status"];
+              partnerRequestSentrev[values["userid"]] = values["request"];
               listFriend.add(userid);
             });
           }
