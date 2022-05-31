@@ -82,7 +82,7 @@ class _Register extends State<Register> {
                   //       fontWeight: FontWeight.bold),
                   // ),
                   Container(
-                    height: 120.0,
+                    height: 100.0,
                     width: 300.0,
                     decoration: BoxDecoration(
                       image: DecorationImage(
@@ -99,6 +99,7 @@ class _Register extends State<Register> {
                       keyboardType: TextInputType.name,
                       controller: userNameEditingControler,
                       decoration: InputDecoration(
+                         prefixIcon: Icon(Icons.person),
                           hintText: "Name",
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10))),
@@ -112,6 +113,7 @@ class _Register extends State<Register> {
                       keyboardType: TextInputType.phone,
                       controller: mobileEditingControler,
                       decoration: InputDecoration(
+                         prefixIcon: Icon(Icons.mobile_friendly),
                           hintText: "Mobile No(Ex-77 12 34567)",
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10))),
@@ -128,6 +130,7 @@ class _Register extends State<Register> {
                         });
                       },
                       decoration: const InputDecoration(
+                         prefixIcon: Icon(Icons.cake),
                         hintText: 'Birthday',
                         border: OutlineInputBorder(
                             borderRadius:
@@ -142,6 +145,7 @@ class _Register extends State<Register> {
                       keyboardType: TextInputType.emailAddress,
                       controller: emailEditingControler,
                       decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.email),
                           hintText: "Email",
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10))),
@@ -155,6 +159,7 @@ class _Register extends State<Register> {
                       keyboardType: TextInputType.number,
                       controller: heightEditingControler,
                       decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.height),
                           hintText: "Height(ft)",
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10))),

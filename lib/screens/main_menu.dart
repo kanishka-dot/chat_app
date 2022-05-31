@@ -1,9 +1,12 @@
 import 'package:chat_app/config/firebase.dart';
+import 'package:chat_app/models/Feedback.dart';
+import 'package:chat_app/models/ProfileDetails.dart';
 import 'package:chat_app/screens/friend_request_page.dart';
 import 'package:chat_app/screens/friends_list_page.dart';
 import 'package:chat_app/screens/message_page.dart';
 import 'package:chat_app/screens/partner_list.dart';
 import 'package:chat_app/screens/user_account_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -12,6 +15,7 @@ import 'package:chat_app/config/color_palette.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:quick_feedback/quick_feedback.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainMenu extends StatefulWidget {
   final bool isReg;
@@ -60,6 +64,7 @@ class MainMenuState extends State<MainMenu> {
     }
     // getProfileImage();
   }
+
 
   void loadFCM() async {
     if (!kIsWeb) {
@@ -203,7 +208,6 @@ class MainMenuState extends State<MainMenu> {
             : [],
       ),
       body: screens[currentindex],
-      
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentindex,
         onTap: (index) => setState(() => {
@@ -296,8 +300,16 @@ class MainMenuState extends State<MainMenu> {
           showTextBox: true,
           textBoxHint: 'Share your feedback',
           submitText: 'SUBMIT',
-          onSubmitCallback: (feedback) {
-            print('$feedback');
+          onSubmitCallback: (feedback) async {
+            var fb = Feedbacks.fromJson(feedback);
+            if (fb.rating > 0) {
+              SharedPreferences  preferences = await SharedPreferences.getInstance();
+              // ProfileDetails userProfile = await getUserDetails();
+              service.saveFeedback(
+                  preferences.getString("id"), preferences.getString("username"), fb.rating, fb.feedback);
+              Fluttertoast.showToast(msg: "We will be in touch with you");
+            }
+
             Navigator.of(context).pop();
           },
           askLaterText: 'ASK LATER',

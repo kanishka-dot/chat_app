@@ -64,6 +64,20 @@ class Service {
     }
   }
 
+  Future<DocumentSnapshot<Map<String, dynamic>>> getUserInfo(
+      String userid) async {
+    try {
+      var userData = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(userid)
+          .get();
+
+      return userData;
+    } catch (error) {
+      return null;
+    }
+  }
+
   Future<String> getGender(String userid) async {
     try {
       String gender;
@@ -435,6 +449,27 @@ class Service {
         await storeTokenAndDate(userId);
         await storeFCMToken(userId);
       }
+      return 1;
+    } catch (error) {
+      return 0;
+    }
+  }
+
+  Future<int> saveFeedback(
+    String userID,
+    String userName,
+    int rate,
+    String remark,
+  ) async {
+    try {
+      await userStore.collection("feedbacks").doc(DateTime.now().microsecondsSinceEpoch.toString()).set({
+        "rating": rate,
+        "remark": remark,
+        "username": userName,
+        "userid": userID,
+        "date": DateTime.now()
+      });
+
       return 1;
     } catch (error) {
       return 0;

@@ -96,7 +96,7 @@ class _UserAccountState extends State<UserAccount> {
             .doc(token)
             .get()
             .then((DocumentSnapshot documentSnapshot) {
-          id = documentSnapshot.get("userid");
+          id = documentSnapshot.get("id");
           nickname = documentSnapshot.data().toString().contains('username')
               ? documentSnapshot.get('username')
               : '';
@@ -442,7 +442,7 @@ class _UserAccountState extends State<UserAccount> {
                           'Profile Name: ',
                           style: TextStyle(
                               fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.normal,
+                              fontWeight: FontWeight.bold,
                               color: Colors.black),
                         ),
                         margin:
@@ -454,6 +454,7 @@ class _UserAccountState extends State<UserAccount> {
                               .copyWith(primaryColor: Colors.lightBlueAccent),
                           child: TextField(
                             decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.person),
                                 hintText: "Jhon",
                                 contentPadding: EdgeInsets.all(5.0),
                                 hintStyle: TextStyle(color: Colors.grey),
@@ -466,14 +467,14 @@ class _UserAccountState extends State<UserAccount> {
                             focusNode: nameFocusNode,
                           ),
                         ),
-                        margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                        margin: EdgeInsets.only(left: 10.0, right: 10.0),
                       ),
                       Container(
                         child: Text(
                           'About Me: ',
                           style: TextStyle(
                               fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.normal,
+                              fontWeight: FontWeight.bold,
                               color: Colors.black),
                         ),
                         margin:
@@ -485,6 +486,7 @@ class _UserAccountState extends State<UserAccount> {
                               .copyWith(primaryColor: Colors.lightBlueAccent),
                           child: TextField(
                             decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.account_box),
                                 hintText: "I'm intrested to hike",
                                 contentPadding: EdgeInsets.all(5.0),
                                 hintStyle: TextStyle(color: Colors.grey),
@@ -497,14 +499,14 @@ class _UserAccountState extends State<UserAccount> {
                             focusNode: statusFocusNode,
                           ),
                         ),
-                        margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                        margin: EdgeInsets.only(left: 10.0, right: 10.0),
                       ),
                       Container(
                         child: Text(
                           'Date of Birth: ',
                           style: TextStyle(
                               fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.normal,
+                              fontWeight: FontWeight.bold,
                               color: Colors.black),
                         ),
                         margin:
@@ -516,6 +518,7 @@ class _UserAccountState extends State<UserAccount> {
                               .copyWith(primaryColor: Colors.lightBlueAccent),
                           child: DateTimeField(
                               decoration: const InputDecoration(
+                                  prefixIcon: Icon(Icons.cake),
                                   contentPadding: EdgeInsets.all(5.0),
                                   hintStyle: TextStyle(color: Colors.grey),
                                   border: OutlineInputBorder(
@@ -529,7 +532,7 @@ class _UserAccountState extends State<UserAccount> {
                                 });
                               }),
                         ),
-                        margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                        margin: EdgeInsets.only(left: 10.0, right: 10.0),
                       ),
 
                       // Container(
@@ -573,7 +576,7 @@ class _UserAccountState extends State<UserAccount> {
                           'Height: ',
                           style: TextStyle(
                               fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.normal,
+                              fontWeight: FontWeight.bold,
                               color: Colors.black),
                         ),
                         margin:
@@ -587,6 +590,7 @@ class _UserAccountState extends State<UserAccount> {
                             keyboardType: TextInputType.number,
                             inputFormatters: [heightFormater],
                             decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.height),
                                 hintText: "Height",
                                 contentPadding: EdgeInsets.all(5.0),
                                 hintStyle: TextStyle(color: Colors.grey),
@@ -599,14 +603,14 @@ class _UserAccountState extends State<UserAccount> {
                             focusNode: heightFocusNode,
                           ),
                         ),
-                        margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                        margin: EdgeInsets.only(left: 10.0, right: 10.0),
                       ),
                       Container(
                         child: Text(
                           'Gender: ',
                           style: TextStyle(
                               fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.normal,
+                              fontWeight: FontWeight.bold,
                               color: Colors.black),
                         ),
                         margin:
@@ -676,7 +680,7 @@ class _UserAccountState extends State<UserAccount> {
                       'Martial Status: ',
                       style: TextStyle(
                           fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.normal,
+                          fontWeight: FontWeight.bold,
                           color: Colors.black),
                     ),
                     margin: EdgeInsets.only(left: 10.0, bottom: 2.0, top: 1.0),
@@ -781,7 +785,7 @@ class _UserAccountState extends State<UserAccount> {
                       'No of children: ',
                       style: TextStyle(
                           fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.normal,
+                          fontWeight: FontWeight.bold,
                           color: Colors.black),
                     ),
                     margin: EdgeInsets.only(left: 10.0, bottom: 2.0, top: 1.0),
@@ -794,6 +798,7 @@ class _UserAccountState extends State<UserAccount> {
                         enabled: _childstate,
                         keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.people),
                             hintText: "2",
                             contentPadding: EdgeInsets.all(5.0),
                             hintStyle: TextStyle(color: Colors.grey),
@@ -806,7 +811,7 @@ class _UserAccountState extends State<UserAccount> {
                         focusNode: noChildFocusNode,
                       ),
                     ),
-                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                    margin: EdgeInsets.only(left: 10.0, right: 10.0),
                   ),
                   Container(
                     alignment: Alignment.topLeft,
@@ -814,7 +819,7 @@ class _UserAccountState extends State<UserAccount> {
                       'Country Living In: ',
                       style: TextStyle(
                           fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.normal,
+                          fontWeight: FontWeight.bold,
                           color: Colors.black),
                     ),
                     margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
@@ -825,6 +830,7 @@ class _UserAccountState extends State<UserAccount> {
                           .copyWith(primaryColor: Colors.lightBlueAccent),
                       child: TextField(
                         decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.flag),
                             hintText: "Sri Lanka",
                             contentPadding: EdgeInsets.all(5.0),
                             hintStyle: TextStyle(color: Colors.grey),
@@ -837,7 +843,7 @@ class _UserAccountState extends State<UserAccount> {
                         focusNode: countryFocusNode,
                       ),
                     ),
-                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                    margin: EdgeInsets.only(left: 10.0, right: 10.0),
                   ),
 
                   Container(
@@ -846,7 +852,7 @@ class _UserAccountState extends State<UserAccount> {
                       'Resident City: ',
                       style: TextStyle(
                           fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.normal,
+                          fontWeight: FontWeight.bold,
                           color: Colors.black),
                     ),
                     margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
@@ -857,6 +863,7 @@ class _UserAccountState extends State<UserAccount> {
                           .copyWith(primaryColor: Colors.lightBlueAccent),
                       child: TextField(
                         decoration: InputDecoration(
+                             prefixIcon: Icon(Icons.place),
                             hintText: "Colombo",
                             contentPadding: EdgeInsets.all(5.0),
                             hintStyle: TextStyle(color: Colors.grey),
@@ -869,7 +876,7 @@ class _UserAccountState extends State<UserAccount> {
                         focusNode: residCityFocusNode,
                       ),
                     ),
-                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                    margin: EdgeInsets.only(left: 10.0, right: 10.0),
                   ),
 
                   Container(
@@ -878,7 +885,7 @@ class _UserAccountState extends State<UserAccount> {
                       'Job: ',
                       style: TextStyle(
                           fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.normal,
+                          fontWeight: FontWeight.bold,
                           color: Colors.black),
                     ),
                     margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
@@ -889,6 +896,7 @@ class _UserAccountState extends State<UserAccount> {
                           .copyWith(primaryColor: Colors.lightBlueAccent),
                       child: TextField(
                         decoration: InputDecoration(
+                             prefixIcon: Icon(Icons.work),
                             hintText: "Accountant",
                             contentPadding: EdgeInsets.all(5.0),
                             hintStyle: TextStyle(color: Colors.grey),
@@ -901,7 +909,7 @@ class _UserAccountState extends State<UserAccount> {
                         focusNode: jobFocusNode,
                       ),
                     ),
-                    margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                    margin: EdgeInsets.only(left: 10.0, right: 10.0),
                   ),
 // end addition information
                   Container(
@@ -915,10 +923,10 @@ class _UserAccountState extends State<UserAccount> {
                       highlightColor: Colors.grey,
                       splashColor: Colors.transparent,
                       textColor: Colors.white,
-                      padding: EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
+                      padding: EdgeInsets.fromLTRB(40.0, 10.0, 40.0, 10.0),
                       shape: RoundedRectangleBorder(
                           borderRadius:
-                              BorderRadius.all(Radius.circular(32.0))),
+                              BorderRadius.all(Radius.circular(10.0))),
                     ),
                     margin: EdgeInsets.only(top: 30.0, bottom: 10.0),
                   ),
@@ -963,7 +971,7 @@ class _UserAccountState extends State<UserAccount> {
                   // )
                 ],
               ),
-              padding: EdgeInsets.only(left: 15.0, right: 15.0),
+              padding: EdgeInsets.only(left: 10.0, right: 10.0),
             )
           ],
         ));
