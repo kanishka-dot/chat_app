@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:chat_app/config/Repository.dart';
+import 'package:chat_app/models/UserModel.dart';
 import 'package:chat_app/screens/main_menu.dart';
 import 'package:chat_app/screens/register_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,6 +16,7 @@ class Service {
   final auth = FirebaseAuth.instance; //firebase authenticatio
   final userStore = FirebaseFirestore.instance;
   final _codeController = TextEditingController();
+  final Repository _repository = Repository();
   DocumentSnapshot snapshot;
   final storage = new FlutterSecureStorage();
 
@@ -95,103 +99,31 @@ class Service {
         return 'male';
       }
     } catch (error) {
-      return 'female';
+      return 'other';
     }
   }
 
   Future<void> saveUserDetails(userid) async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userid)
-        .get()
-        .then((DocumentSnapshot documentSnapshot) {
-      saveLocally("id", userid);
-      saveLocally(
-          "username",
-          documentSnapshot.data().toString().contains('username')
-              ? documentSnapshot.get('username')
-              : '');
-      saveLocally(
-          "status",
-          documentSnapshot.data().toString().contains('status')
-              ? documentSnapshot.get('status')
-              : '');
-      saveLocally(
-          "gender",
-          documentSnapshot.data().toString().contains('gender')
-              ? documentSnapshot.get('gender')
-              : '');
-      saveLocally(
-          "height",
-          documentSnapshot.data().toString().contains('height')
-              ? documentSnapshot.get('height')
-              : '');
-      Timestamp ts = documentSnapshot.data().toString().contains('dob')
-          ? documentSnapshot.get('dob')
-          : DateTime.now();
-      int timeInMilSec = ts.microsecondsSinceEpoch;
-      saveLocallyDob("dob", timeInMilSec);
+    try {
+      var _response = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userid)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        return documentSnapshot.data();
+      });
 
-      saveLocally(
-          "dpurl",
-          documentSnapshot.data().toString().contains('dpurl')
-              ? documentSnapshot.get('dpurl')
-              : '');
-      saveLocally(
-          "text_status",
-          documentSnapshot.data().toString().contains('text_status')
-              ? documentSnapshot.get('text_status')
-              : '');
-      saveLocally(
-          "username",
-          documentSnapshot.data().toString().contains('username')
-              ? documentSnapshot.get('username')
-              : '');
+      UserModel _userData =
+          UserModel.fromJson(_response as Map<String, dynamic>);
+      _repository.addValue('user', jsonEncode(_userData.toJson()));
 
-      //additional information
+      // String _userString = await _repository.readData("user");
+      // UserModel _userObject = UserModel.fromJson(jsonDecode(_userString));
+    } catch (e) {
+      print(e);
+    }
 
-      saveLocally(
-          "martial",
-          documentSnapshot.data().toString().contains('martial')
-              ? documentSnapshot.get('martial')
-              : '');
-
-      saveLocally(
-          "nochildrn",
-          documentSnapshot.data().toString().contains('nochildrn')
-              ? documentSnapshot.get('nochildrn')
-              : '');
-
-      saveLocally(
-          "country",
-          documentSnapshot.data().toString().contains('country')
-              ? documentSnapshot.get('country')
-              : '');
-
-      saveLocally(
-          "residstat",
-          documentSnapshot.data().toString().contains('residstat')
-              ? documentSnapshot.get('residstat')
-              : '');
-
-      saveLocally(
-          "residcity",
-          documentSnapshot.data().toString().contains('residcity')
-              ? documentSnapshot.get('residcity')
-              : '');
-
-      saveLocally(
-          "citzne",
-          documentSnapshot.data().toString().contains('citzne')
-              ? documentSnapshot.get('citzne')
-              : '');
-
-      saveLocally(
-          "job",
-          documentSnapshot.data().toString().contains('job')
-              ? documentSnapshot.get('job')
-              : '');
-    });
+   
   }
 
   void getUser() async {
@@ -316,59 +248,6 @@ class Service {
     }
   }
 
-  //  void createUser(context, email, password, username) async {
-  //   try {
-  //     await auth
-  //         .createUserWithEmailAndPassword(email: email, password: password)
-  //         .then((value) => {
-  //               userStore.collection("users").doc(value.user.uid).set({
-  //                 "email": email,
-  //                 "username": username,
-  //                 "dpurl": "",
-  //                 "userid": value.user.uid,
-  //                 "gender": "",
-  //                 "age": "",
-  //                 "status": "active",
-  //                 "text_status": "",
-  //                 "cre_date": DateTime.now()
-  //               }),
-  //               if (value.user.uid != "")
-  //                 {
-  //                   saveUserDetails(value.user.uid),
-  //                   storeTokenAndDate(value.user.uid)
-  //                 },
-  //               userStore.collection("friends").doc(value.user.uid).set({}),
-  //               Navigator.pushAndRemoveUntil(
-  //                 context,
-  //                 MaterialPageRoute(builder: (context) => MainMenu()),
-  //                 (route) => false,
-  //               )
-  //             });
-  //   } catch (e) {
-  //     errorHandle(context, e);
-  //   }
-  // }
-
-  // login user function
-  // void loginUser(context, phone) async {
-  //   try {
-  //    ConfirmationResult confirmationResult  = await auth.signInWithPhoneNumber(phone);
-
-  //  confirmationResult.confirm(verificationCode)
-
-  //           User user = result.user;
-  //               if (value.user.uid != "") {saveUserDetails(value.user.uid)},
-  //               storeTokenAndDate(value.user.uid),
-  //               Navigator.pushAndRemoveUntil(
-  //                 context,
-  //                 MaterialPageRoute(builder: (context) => MainMenu()),
-  //                 (route) => false,
-  //               )
-
-  //   } catch (e) {
-  //     errorHandle(context, e);
-  //   }
-  // }
 
   // logout user function
   void loginOut(context) async {
@@ -462,7 +341,10 @@ class Service {
     String remark,
   ) async {
     try {
-      await userStore.collection("feedbacks").doc(DateTime.now().microsecondsSinceEpoch.toString()).set({
+      await userStore
+          .collection("feedbacks")
+          .doc(DateTime.now().microsecondsSinceEpoch.toString())
+          .set({
         "rating": rate,
         "remark": remark,
         "username": userName,

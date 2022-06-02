@@ -296,9 +296,10 @@ class MainMenuState extends State<MainMenu> {
       context: context,
       builder: (context) {
         return QuickFeedback(
-          title: 'Leave a feedback',
+          title: 'Admin Help',
           showTextBox: true,
-          textBoxHint: 'Share your feedback',
+          defaultRating: 0,
+          textBoxHint: 'Type your message',
           submitText: 'SUBMIT',
           onSubmitCallback: (feedback) async {
             var fb = Feedbacks.fromJson(feedback);
@@ -312,10 +313,7 @@ class MainMenuState extends State<MainMenu> {
 
             Navigator.of(context).pop();
           },
-          askLaterText: 'ASK LATER',
-          onAskLaterCallback: () {
-            print('Do something on ask later click');
-          },
+         
         );
       },
     );

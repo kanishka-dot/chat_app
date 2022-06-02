@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:chat_app/config/Repository.dart';
 import 'package:chat_app/config/firebase.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_app/config/notificationApi.dart';
+import 'package:chat_app/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +22,9 @@ class UserAccount extends StatefulWidget {
 
 class _UserAccountState extends State<UserAccount> {
   Service service = Service();
+  final Repository _repository = Repository();
   NotificationApi notification = NotificationApi();
+  UserModel _userObject;
   SharedPreferences preferences;
   TextEditingController nameTextEditorController;
   TextEditingController statusTextEditorController;
@@ -65,6 +70,7 @@ class _UserAccountState extends State<UserAccount> {
   bool isLoading = false;
   bool _childstate = false;
   File tempImage;
+  int timestamp;
 
   var heightFormater =
       new MaskTextInputFormatter(mask: '#.##', filter: {"#": RegExp(r'[0-9]')});
@@ -85,12 +91,11 @@ class _UserAccountState extends State<UserAccount> {
 
   void readDataFromLocal() async {
     try {
-      preferences = await SharedPreferences.getInstance();
-      id = preferences.getString('id');
-      int timestamp;
-      String token = await service.getToken();
+      String _userString = await _repository.readData("user");
+      _userObject = UserModel.fromJson(jsonDecode(_userString));
 
-      if (id == null) {
+      String token = await service.getToken();
+      if (_userObject == null) {
         await FirebaseFirestore.instance
             .collection("users")
             .doc(token)
@@ -145,41 +150,20 @@ class _UserAccountState extends State<UserAccount> {
               : '';
         });
       } else {
-        nickname = preferences.containsKey('username')
-            ? preferences.getString('username')
-            : '';
-        status = preferences.containsKey('text_status')
-            ? preferences.getString('text_status')
-            : '';
-        photourl = preferences.containsKey('dpurl')
-            ? preferences.getString('dpurl')
-            : '';
-        timestamp = preferences.containsKey('dob') ? preferences.get('dob') : 0;
-        _radioVal =
-            preferences.containsKey('gender') ? preferences.get('gender') : '';
-        height =
-            preferences.containsKey('height') ? preferences.get('height') : '';
+        nickname = _userObject.username;
+        status = _userObject.text_status;
+        photourl = _userObject.dpurl;
+        timestamp = _userObject.dob;
+        _radioVal = _userObject.gender;
+        height = _userObject.height;
 //additional info preferances
-        _MartialradioVal = preferences.containsKey('martial')
-            ? preferences.getString('martial')
-            : '';
-        noChild = preferences.containsKey('nochildrn')
-            ? preferences.getString('nochildrn')
-            : '';
-        country = preferences.containsKey('country')
-            ? preferences.getString('country')
-            : '';
-        residSta = preferences.containsKey('residstat')
-            ? preferences.getString('residstat')
-            : '';
-        residCit = preferences.containsKey('residcity')
-            ? preferences.getString('residcity')
-            : '';
-        citzne = preferences.containsKey('citzne')
-            ? preferences.getString('citzne')
-            : '';
-        job =
-            preferences.containsKey('job') ? preferences.getString('job') : '';
+        _MartialradioVal = _userObject.martial;
+        noChild = _userObject.nochildrn;
+        country = _userObject.country;
+        residSta = _userObject.residstat;
+        residCit = _userObject.residcity;
+        citzne = _userObject.citzne;
+        job = _userObject.job;
       }
 
       setState(() {
@@ -314,7 +298,7 @@ class _UserAccountState extends State<UserAccount> {
         throw ("Gender is required");
       }
 
-      FirebaseFirestore.instance.collection('users').doc(id).update({
+      FirebaseFirestore.instance.collection('users').doc(_userObject.userid).update({
         "dpurl": photourl,
         "text_status": status,
         "username": nickname,
@@ -329,20 +313,36 @@ class _UserAccountState extends State<UserAccount> {
         "citzne": citzne,
         "job": job,
       }).then((value) async {
-        await preferences.setString("dpurl", photourl);
-        await preferences.setString("text_status", status);
-        await preferences.setString("username", nickname);
-        await preferences.setInt("dob", dob.microsecondsSinceEpoch);
-        await preferences.setString("gender", _radioVal);
 
-        await preferences.setString("height", heightFormater.getMaskedText());
-        await preferences.setString("martial", _MartialradioVal);
-        await preferences.setString("nochildrn", noChild);
-        await preferences.setString("country", country);
-        await preferences.setString("residstat", residSta);
-        await preferences.setString("residcity", residCit);
-        await preferences.setString("citzne", citzne);
-        await preferences.setString("job", job);
+        _userObject.username = nickname;
+        _userObject.dpurl = photourl;
+        _userObject.text_status = status;
+        _userObject.dob = dob.microsecondsSinceEpoch;
+        _userObject.gender = _radioVal;
+        _userObject.height = height;
+        _userObject.martial = _MartialradioVal;
+        _userObject.nochildrn = noChild;
+        _userObject.country = country;
+        _userObject.residstat = residSta;
+        _userObject.residcity = residCit;
+        _userObject.citzne = citzne;
+        _userObject.job = job;
+        _repository.addValue('user', jsonEncode(_userObject.toJson()));
+
+        // await preferences.setString("dpurl", photourl);
+        // await preferences.setString("text_status", status);
+        // await preferences.setString("username", nickname);
+        // await preferences.setInt("dob", dob.microsecondsSinceEpoch);
+        // await preferences.setString("gender", _radioVal);
+
+        // await preferences.setString("height", heightFormater.getMaskedText());
+        // await preferences.setString("martial", _MartialradioVal);
+        // await preferences.setString("nochildrn", noChild);
+        // await preferences.setString("country", country);
+        // await preferences.setString("residstat", residSta);
+        // await preferences.setString("residcity", residCit);
+        // await preferences.setString("citzne", citzne);
+        // await preferences.setString("job", job);
 
         setState(() {
           isLoading = false;
@@ -454,7 +454,7 @@ class _UserAccountState extends State<UserAccount> {
                               .copyWith(primaryColor: Colors.lightBlueAccent),
                           child: TextField(
                             decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.person),
+                                prefixIcon: Icon(Icons.person),
                                 hintText: "Jhon",
                                 contentPadding: EdgeInsets.all(5.0),
                                 hintStyle: TextStyle(color: Colors.grey),
@@ -486,7 +486,7 @@ class _UserAccountState extends State<UserAccount> {
                               .copyWith(primaryColor: Colors.lightBlueAccent),
                           child: TextField(
                             decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.account_box),
+                                prefixIcon: Icon(Icons.account_box),
                                 hintText: "I'm intrested to hike",
                                 contentPadding: EdgeInsets.all(5.0),
                                 hintStyle: TextStyle(color: Colors.grey),
@@ -863,7 +863,7 @@ class _UserAccountState extends State<UserAccount> {
                           .copyWith(primaryColor: Colors.lightBlueAccent),
                       child: TextField(
                         decoration: InputDecoration(
-                             prefixIcon: Icon(Icons.place),
+                            prefixIcon: Icon(Icons.place),
                             hintText: "Colombo",
                             contentPadding: EdgeInsets.all(5.0),
                             hintStyle: TextStyle(color: Colors.grey),
@@ -896,7 +896,7 @@ class _UserAccountState extends State<UserAccount> {
                           .copyWith(primaryColor: Colors.lightBlueAccent),
                       child: TextField(
                         decoration: InputDecoration(
-                             prefixIcon: Icon(Icons.work),
+                            prefixIcon: Icon(Icons.work),
                             hintText: "Accountant",
                             contentPadding: EdgeInsets.all(5.0),
                             hintStyle: TextStyle(color: Colors.grey),
