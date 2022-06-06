@@ -132,9 +132,18 @@ class FriendsState extends State<FriendsRequest> {
             List<FriendsModel> listFriends = <FriendsModel>[];
             bool isPending = false;
             querySnapshot.docs.forEach((doc) {
+              String age = findAge(doc.get('dob')).toString();
               if (doc["userid"] != loginUser) {
-                FriendsModel friendsModel = new FriendsModel(doc["username"],
-                    doc["dpurl"], doc["userid"], isPending, "", "", "", "", "");
+                FriendsModel friendsModel = new FriendsModel(
+                    doc["username"],
+                    doc["dpurl"],
+                    doc["userid"],
+                    isPending,
+                    age,
+                    "",
+                    doc["gender"],
+                    doc["height"],
+                    doc["residcity"]);
                 listFriends.add(friendsModel);
               }
             });
@@ -145,5 +154,18 @@ class FriendsState extends State<FriendsRequest> {
             });
           });
         });
+  }
+
+  int findAge(Timestamp dob) {
+    try {
+      int currentyear = DateTime.now().year;
+
+      DateTime dattime = dob.toDate();
+      int age = currentyear - dattime.year;
+
+      return age;
+    } catch (error) {
+      return 0;
+    }
   }
 }
