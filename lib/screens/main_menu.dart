@@ -1,6 +1,10 @@
+import 'dart:convert';
+
+import 'package:chat_app/config/Repository.dart';
 import 'package:chat_app/config/firebase.dart';
 import 'package:chat_app/models/Feedback.dart';
 import 'package:chat_app/models/ProfileDetails.dart';
+import 'package:chat_app/models/UserModel.dart';
 import 'package:chat_app/screens/friend_request_page.dart';
 import 'package:chat_app/screens/friends_list_page.dart';
 import 'package:chat_app/screens/message_page.dart';
@@ -27,6 +31,7 @@ class MainMenu extends StatefulWidget {
 class MainMenuState extends State<MainMenu> {
   AndroidNotificationChannel channel;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  final Repository _repository = Repository();
   Service service = Service();
   var loginUser;
 
@@ -64,7 +69,6 @@ class MainMenuState extends State<MainMenu> {
     }
     // getProfileImage();
   }
-
 
   void loadFCM() async {
     if (!kIsWeb) {
@@ -184,7 +188,7 @@ class MainMenuState extends State<MainMenu> {
                                   SizedBox(
                                     width: 8,
                                   ),
-                                  Text('Feedback')
+                                  Text('Admin Help')
                                 ],
                               )),
                           PopupMenuDivider(),
@@ -256,7 +260,7 @@ class MainMenuState extends State<MainMenu> {
             MaterialPageRoute(builder: (context) => UserAccount())); //Account
         break;
       case 2:
-        showFeedback(context); //Account
+        showFeedbackDialog(context); //Account
         break;
     }
   }
@@ -291,6 +295,43 @@ class MainMenuState extends State<MainMenu> {
     );
   }
 
+  showFeedbackDialog(BuildContext context) {
+    TextEditingController _textFieldController = TextEditingController();
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text("Submit"),
+      onPressed: () async {
+        if (_textFieldController.toString().trim().isNotEmpty) {
+          String _userString = await _repository.readData("user");
+          UserModel _userObject = UserModel.fromJson(jsonDecode(_userString));
+          service.saveFeedback(_userObject.userid, _userObject.username, 0,
+              _textFieldController.text);
+          Navigator.pop(context);
+          Fluttertoast.showToast(msg: "We will be in touch with you");
+        }
+        print(_textFieldController.text);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Admin Help"),
+      content: TextField(
+        onChanged: (value) {},
+        controller: _textFieldController,
+        decoration: InputDecoration(hintText: "Type your message"),
+      ),
+      actions: [okButton],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   showFeedback(context) {
     showDialog(
       context: context,
@@ -298,22 +339,21 @@ class MainMenuState extends State<MainMenu> {
         return QuickFeedback(
           title: 'Admin Help',
           showTextBox: true,
-          defaultRating: 0,
           textBoxHint: 'Type your message',
           submitText: 'SUBMIT',
           onSubmitCallback: (feedback) async {
             var fb = Feedbacks.fromJson(feedback);
             if (fb.rating > 0) {
-              SharedPreferences  preferences = await SharedPreferences.getInstance();
+              SharedPreferences preferences =
+                  await SharedPreferences.getInstance();
               // ProfileDetails userProfile = await getUserDetails();
-              service.saveFeedback(
-                  preferences.getString("id"), preferences.getString("username"), fb.rating, fb.feedback);
+              service.saveFeedback(preferences.getString("id"),
+                  preferences.getString("username"), fb.rating, fb.feedback);
               Fluttertoast.showToast(msg: "We will be in touch with you");
             }
 
             Navigator.of(context).pop();
           },
-         
         );
       },
     );
