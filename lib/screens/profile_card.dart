@@ -272,14 +272,28 @@ class _ProfileCardState extends State<ProfileCard> {
   void getUserData(String userid) async {
     var userData =
         await FirebaseFirestore.instance.collection("users").doc(userid).get();
-    setState(() {
+    int getAge =  findAge(userData['dob']);
+    setState(()  {
       profileurl = userData['dpurl'];
       name = userData['username'];
       about = userData['text_status'];
-      age = userData['age'];
+      age = getAge.toString();
       gender = userData['gender'];
       city = userData['residcity'];
       height = userData['height'];
     });
+  }
+
+  int findAge(Timestamp dob) {
+    try {
+      int currentyear = DateTime.now().year;
+
+      DateTime dattime = dob.toDate();
+      int age = currentyear - dattime.year;
+
+      return age;
+    } catch (error) {
+      return 0;
+    }
   }
 }

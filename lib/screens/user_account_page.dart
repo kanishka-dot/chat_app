@@ -150,6 +150,7 @@ class _UserAccountState extends State<UserAccount> {
               : '';
         });
       } else {
+        id = _userObject.userid;
         nickname = _userObject.username;
         status = _userObject.text_status;
         photourl = _userObject.dpurl;
@@ -255,7 +256,9 @@ class _UserAccountState extends State<UserAccount> {
                           // "dob": dob,
                           // "gender": _radioVal
                         }).then((value) async {
-                          await preferences.setString("dpurl", photourl);
+                          // await preferences.setString("dpurl", photourl);
+                           _userObject.dpurl = photourl;
+                                _repository.addValue('user', jsonEncode(_userObject.toJson()));
                           setState(() {
                             isLoading = false;
                           });
